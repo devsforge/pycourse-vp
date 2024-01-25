@@ -28,12 +28,28 @@ developers, especially in server environments.
 -   There are far too many different distributions
 -   Linux is not very friendly and confusing for beginners
 
-.. rubric:: Linux -- the Kernel
+.. rubric:: Linux -- the Kernel and distributions
 
 Strictly speaking, the name **"Linux"** only applies to the operating system
 kernel, which performs the actual operating system tasks. It takes care of
 elementary functions like memory and process management and hardware control.
 Application programs must call upon the kernel to, e.g. access files on disk.
+
+To accomplish useful work, a multitude of system and application programs,
+libraries, documentation etc. is necessary. "Distributions" are nothing but
+up-to-date selections of these together with special programs (usually tools
+for installation and maintenance) provided by companies or other organisations,
+possibly together with other services such as support, documentation, or
+updates. Distributions differ mostly in the selection of software they offer,
+their administration tools, extra services, and price.
+
+.. figure:: /../assets/img/linux-distros-tree.svg
+    :align: center
+
+    Linux distros tree
+
+.. figure:: /../assets/img/linux-distros-map.png
+    :align: center
 
 .. toctree::
     :name: linux
