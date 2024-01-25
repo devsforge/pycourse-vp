@@ -1,5 +1,5 @@
 *******************************************************************************
-                                 Base Commands
+                                   Commands
 *******************************************************************************
 
 A computer's operation, no matter which operating system it is running, can be
@@ -70,3 +70,23 @@ In shells, there are essentially two kinds of commands:
     files, which within the file system are found in directories like */bin* or
     */usr/bin*. As a user, you can provide your own programs, which the shell
     will execute like other external commands.
+
+What is the shell?
+==================
+
+All kinds of definitions are available, ranging from the simple comparison that
+"the shell is the steering wheel of the car", to the vague definition in the
+Bash manual which says that "bash is an sh-compatible command language
+interpreter", or an even more obscure expression, "a shell manages the
+interaction between the system and its users".
+
+A shell can best be compared with a way of talking to the computer, a language.
+Most users do know that other language, the point-and-click language of the
+desktop. But in that language the computer is leading the conversation, while
+the user has the passive role of picking tasks from the ones presented. It is
+very difficult for a programmer to include all options and possible uses of
+a command in the GUI-format. Thus, GUIs are almost always less capable than
+the command or commands that form the backend.
+
+The shell, on the other hand, is an advanced way of communicating with the
+system, because it allows for two-way conversation and talking initiative.
