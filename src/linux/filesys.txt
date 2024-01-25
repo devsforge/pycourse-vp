@@ -2,6 +2,9 @@
                         File system and file management
 *******************************************************************************
 
+Files
+=====
+
 A simple description of the UNIX system, also applicable to Linux, is this:
 
     "On a UNIX system, everything is a file; if something is not a file,
@@ -40,3 +43,24 @@ generally all devices, are considered to be files, according to the system.
 :named pipes:
     act more or less like sockets and form a way for processes to communicate
     with each other, without using network socket semantic.
+
+The ``-l`` option to ``ls`` display the file type, using the first character
+of each input line:
+
++--------+--------------+
+| Symbol | Meaning      |
++========+==============+
+| ``-``  | Regular file |
++--------+--------------+
+| ``d``  | Directory    |
++--------+--------------+
+| ``l``  | Link         |
++--------+--------------+
+| ``c``  | Special file |
++--------+--------------+
+| ``s``  | Socket       |
++--------+--------------+
+| ``p``  | Named pipe   |
++--------+--------------+
+| ``b``  | Block device |
++--------+--------------+
