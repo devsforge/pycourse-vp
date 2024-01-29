@@ -131,3 +131,4 @@ their administration tools, extra services, and price.
     commands
     filesys
     users
+    ssh
