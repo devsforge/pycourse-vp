@@ -90,3 +90,6 @@ the command or commands that form the backend.
 
 The shell, on the other hand, is an advanced way of communicating with the
 system, because it allows for two-way conversation and talking initiative.
+
+.. todo: get most used commands from appendix:
+         pwd, cd, ls, mkdir, touch, more, less, head, tail
