@@ -8,7 +8,7 @@
 [rejected]: https://img.shields.io/badge/document_status-rejected-red.svg
 [final]: https://img.shields.io/badge/document_status-final-blue.svg
 [//]: # (@formatter:on)
-![status][draft]
+![status][accepted]
 
 <details>
 <summary>Document Changelog</summary>
@@ -17,6 +17,7 @@
 
 | ver. | Date       | Author                                  | Changes description                 |
 |------|------------|-----------------------------------------|-------------------------------------|
+| 1.0  | 2026-01-24 | Serhii Horodilov                        | Accepted                            |
 | 0.3  | 2026-01-23 | Serhii Horodilov                        | Fix typos and make minor formatting |
 | 0.2  | 2026-01-23 | Claude Opus 4.5 <noreply@anthropic.com> | Adopt Option 4 with AGENTS.md       |
 | 0.1  | 2026-01-23 | Claude Opus 4.5 <noreply@anthropic.com> | Initial draft                       |
