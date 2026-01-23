@@ -11,15 +11,15 @@ This repository uses AI agents for infrastructure, tooling, and documentation ta
 
 ## Project Summary
 
-| Attribute | Value |
-|-----------|-------|
-| Name | Python for Web-Developers |
-| ID | `pymastery-vp` |
-| Audience | Complete beginners |
-| Goal | Prepare learners for junior/trainee developer positions |
-| Stack | Python, Django, Django REST Framework |
-| Primary language | English (en-US) |
-| Translations | Ukrainian (uk-UA) |
+| Attribute        | Value                                                   |
+|------------------|---------------------------------------------------------|
+| Name             | Python for Web-Developers                               |
+| ID               | `pymastery-vp`                                          |
+| Audience         | Complete beginners                                      |
+| Goal             | Prepare learners for junior/trainee developer positions |
+| Stack            | Python, Django, Django REST Framework                   |
+| Primary language | English (en-US)                                         |
+| Translations     | Ukrainian (uk-UA)                                       |
 
 ## Critical Rules
 
@@ -62,10 +62,4 @@ This repository uses AI agents for infrastructure, tooling, and documentation ta
 
 ## Git Identity
 
-When committing as an AI agent:
-
-```
-Author: Claude <claude@anthropic.noreply>
-```
-
-See `config.yaml` for full git configuration.
+See [`config.yaml`](.ai/config.yaml) for full git configuration.

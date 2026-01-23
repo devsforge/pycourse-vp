@@ -38,14 +38,23 @@ git_remotes:
   upstream: https://github.com/PonomaryovVladyslav/PythonCourses.git
 git_remote_default: origin
 git_identities:
-  claude:
-    name: "Claude"
-    email: "claude@anthropic.noreply"
+  claude_sonnet_4.5:
+    name: "Claude Sonnet 4.5"
+    email: "noreply@anthropic.com"
     # additional arguments to pass to `git commit`
     git_commit_args: >
-      --author="Claude <claude@anthropic.noreply>"
+      --author="Claude Sonnet 4.5 <noreply@anthropic.com>"
       --no-signoff
       --no-gpg-sign
+  claude_opus_4.5:
+    name: "Claude Opus 4.5"
+    email: "noreply@anthropic.com"
+    # additional arguments to pass to `git commit`
+    git_commit_args: >
+      --author="Claude Opus 4.5 <noreply@anthropic.com>"
+      --no-signoff
+      --no-gpg-sign
+
 
 # Project roles for AI agents
 roles:
