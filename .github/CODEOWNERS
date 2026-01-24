@@ -1,3 +1,7 @@
+# Default owner for all contents
+*            @shorodilov
+
+# Section-specific owners (more specific rules override default)
 /src/basics/ @shorodilov @Bandydan @Jules57
 /src/vcs/    @shorodilov @Bandydan
 /src/rdbms/  @shorodilov @Bandydan
