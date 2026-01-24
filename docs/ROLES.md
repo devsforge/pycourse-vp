@@ -19,8 +19,9 @@
 
 | ver. | Date       | Author                                    | Changes description                          |
 |------|------------|-------------------------------------------|----------------------------------------------|
+| 1.1  | 2026-01-24 | Serhii Horodilov                          | Mermaid diagram and WP template              |
 | 1.0  | 2026-01-24 | Serhii Horodilov                          | Final                                        |
-| 0.4  | 2026-01-24 | Serhii Horodilov                          | Remove conrete content directory mention     |
+| 0.4  | 2026-01-24 | Serhii Horodilov                          | Remove concrete content directory mention    |
 | 0.3  | 2026-01-24 | Claude Sonnet 4.5 <noreply@anthropic.com> | Trim scenarios, fix escalation inconsistency |
 | 0.2  | 2026-01-24 | Serhii Horodilov                          | Update escalation paths                      |
 | 0.1  | 2026-01-24 | Claude Sonnet 4.5 <noreply@anthropic.com> | Initial draft                                |
@@ -69,7 +70,7 @@ escalation paths for both human and AI contributors.
 - Can override any other role's decisions
 - Sets constraints and boundaries for other roles
 
-#### Escalation
+#### Escalation Paths
 
 - N/A (the highest authority)
 
@@ -116,13 +117,13 @@ escalation paths for both human and AI contributors.
 - **Autonomous:** Day-to-day decisions, documentation, process, work breakdown
 - **Requires Approval:** Significant structural changes, ADR implementation, scope changes
 
-#### Escalation Path
+#### Escalation Paths
 
 - Escalate to `project-owner` for:
     - Significant structural changes
     - Strategic direction questions
     - Scope boundary uncertainties
-    - ADR approval (transition to the "final"/"approved"/"rejected" state)
+    - ADR approval (transition to the finalized state: "final," "accepted," "rejected," etc.)
     - Resource allocation decisions
 
 #### Work Products
@@ -202,7 +203,7 @@ escalation paths for both human and AI contributors.
 **OUT OF SCOPE:**
 
 - ❌ Course content modification
-- ❌ Strategic decisions (escalate to project-manager)
+- ❌ Strategic decisions (escalate to project-owner)
 - ❌ Pedagogical changes
 - ❌ Content creation or rewriting
 
@@ -211,7 +212,7 @@ escalation paths for both human and AI contributors.
 - **Autonomous:** Infrastructure improvements, tooling configuration, file organization
 - **Requires Review:** Significant structural changes affecting multiple systems
 
-#### Escalation Path
+#### Escalation Paths
 
 - Escalate to `project-owner` for:
     - Decisions affecting project scope or direction
@@ -345,7 +346,7 @@ Expects work packages containing:
 **OUT OF SCOPE:**
 
 - ❌ Course content or structure
-- ❌ Strategic infrastructure decisions (escalate to project-manager)
+- ❌ Strategic infrastructure decisions (escalate to the project-owner)
 
 #### Decision Authority
 
@@ -366,49 +367,31 @@ Expects work packages containing:
 
 ### Work Handoff Flow
 
-```
-[Project Owner]
-    ↓ (Strategic direction)
-[Project Manager]
-    ↓ (Work packages)
-[Human Operator]
-    ↓ (Context delivery)
-[Executor Roles: Administrator / Editor / DevOps]
-    ↓ (Execution & commits)
-[Git Repository]
-    ↓ (Review trigger)
-[Project Manager / Project Owner]
-    ↓ (Approval or iteration)
-[Completion]
+```mermaid
+---
+title: Work Handoff Flow
+---
+sequenceDiagram
+    actor owner as Project Owner
+    participant manager as Project Manager
+    actor operator as Prompt Operator
+    participant executor as Executor Roles
+    participant copilot as GitHub Copilot
+    owner ->> manager: strategic direction
+    manager ->> operator: work packages
+    operator --> executor: context delivery
+    executor --) owner: clarification
+    executor ->> git: execution & commits
+    git ->> copilot: review trigger
+    git ->> owner: review
+    owner --) executor: iteration
 ```
 
 ### Work Package Template
 
-All work assignments to executor roles should follow this format:
+All work assignments to executor roles should follow the [work package template][work_package_template].
 
-```markdown
-## Objective
-
-[Clear, concrete goal – one sentence]
-
-## Backstory
-
-[Why this work matters - 2-3 sentences]
-
-## Definition of Done
-
-- [ ] Specific criterion 1
-- [ ] Specific criterion 2
-- [ ] Specific criterion 3
-
-## Context
-
-[Relevant background information, constraints, references]
-
-## Deliverables
-
-[Expected outputs, files, documentation]
-```
+[work_package_template]: ../templates/WP.md
 
 ### ADR Requirement Triggers
 
