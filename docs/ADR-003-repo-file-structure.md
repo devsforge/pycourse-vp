@@ -15,13 +15,14 @@
 
 [//]: # (order by version number descending)
 
-| ver. | Date       | Author                                    | Changes description                          |
-|------|------------|-------------------------------------------|----------------------------------------------|
-| 0.5  | 2026-01-25 | Serhii Horodilov                          | Add `upstream` repository link               |
-| 0.4  | 2026-01-25 | Serhii Horodilov                          | Fix typos                                    |
-| 0.3  | 2026-01-25 | Claude Sonnet 4.5 <noreply@anthropic.com> | Reframe as ru-RU localization, add pictures/ |
-| 0.2  | 2026-01-25 | Serhii Horodilov                          | Fix typos                                    |
-| 0.1  | 2026-01-25 | Claude Sonnet 4.5 <noreply@anthropic.com> | Initial draft                                |
+| ver. | Date       | Author                                    | Changes description                       |
+|------|------------|-------------------------------------------|-------------------------------------------|
+| 0.6  | 2026-01-26 | Serhii Horodilov                          | Replace `locales/**` with `content/**`    |
+| 0.5  | 2026-01-26 | Serhii Horodilov                          | Add `upstream` repository link            |
+| 0.4  | 2026-01-25 | Serhii Horodilov                          | Fix typos                                 |
+| 0.3  | 2026-01-25 | Claude Sonnet 4.5 <noreply@anthropic.com> | Reframe as ru localization, add pictures/ |
+| 0.2  | 2026-01-25 | Serhii Horodilov                          | Fix typos                                 |
+| 0.1  | 2026-01-25 | Claude Sonnet 4.5 <noreply@anthropic.com> | Initial draft                             |
 
 </details>
 
@@ -50,7 +51,7 @@ project infrastructure. This creates organizational and discoverability issues:
    `AGENTS.md` and `CLAUDE.md`)
 4. **Scattered legacy content**: Russian lesson files at root, related images in `/pictures/lessonXX/` subdirectories –
    content and assets not colocated
-5. **Incomplete localization structure**: No clear locale organization (`en-US`, `uk-UA`, `ru-RU`) for multilingual
+5. **Incomplete localization structure**: No clear locale organization (`en-US`, `uk-UA`, `ru`) for multilingual
    project
 6. **Maintenance overhead**: Legacy files require consideration during restructuring or tooling changes
 7. **Onboarding friction**: New contributors must understand historical context to navigate repository
@@ -61,7 +62,7 @@ project infrastructure. This creates organizational and discoverability issues:
 The legacy Russian-language files are from the original course version (the upstream source). The project has since
 been translated to English with Ukrainian support, and content has been reorganized into `/src/`. The legacy files were
 kept in place during initial translation work but have not been organized as a complete, preserved historical artifact
-representing the original `ru-RU` localization.
+representing the original `ru` localization.
 
 > [!IMPORTANT]
 > This decision is interdependent with ADR-002 (SSG Replacement). The chosen SSG may have expectations about content
@@ -71,7 +72,7 @@ representing the original `ru-RU` localization.
 
 - **Contributor clarity**: Make it obvious where current content lives and where new files should be added
 - **Historical preservation**: Maintain complete legacy Russian content as historical artifact
-- **Localization clarity**: Establish clear locale-based organization (`en-US`, `uk-UA`, `ru-RU`)
+- **Localization clarity**: Establish clear locale-based organization (`en-US`, `uk-UA`, `ru`)
 - **Maintainability**: Reduce a cognitive load when navigating repository structure
 - **Discoverability**: Clear separation between current and historical content
 - **Content-asset colocation**: Keep related lesson content and images together
@@ -81,9 +82,9 @@ representing the original `ru-RU` localization.
 
 ## Considered Options
 
-### Option 1: Organize as `locales/ru-RU/` (Legacy Localization)
+### Option 1: Organize as `content/ru/` (Legacy Localization)
 
-**Description**: Create a `locales/ru-RU/` directory structure that preserves all legacy Russian content (root `*.md`
+**Description**: Create a `content/ru/` directory structure that preserves all legacy Russian content (root `*.md`
 files and `/pictures/lessonXX/` assets) as complete, self-contained localization. This treats the original Russian
 course respectfully as a preserved historical artifact while clearly separating it from active English/Ukrainian
 content.
@@ -96,7 +97,7 @@ content.
 - **Git history maintained**: Uses `git mv` to preserve full history
 - **Historical reference**: Easy-to-browse complete original course structure
 - **No data loss**: Everything preserved in an organized, discoverable location
-- **Future-compatible**: If `ru-RU` support is ever revived, content is ready
+- **Future-compatible**: If `ru` support is ever revived, content is ready
 - **Clean separation**: Root becomes infrastructure-only, locales contain all content variations
 
 **Cons**:
@@ -108,18 +109,18 @@ content.
 **Structure Example**:
 
 ```
-locales/
-  ru-RU/           # Legacy Russian (preserved, not maintained)
-    lessons/       # All lesson*.md, module*.md from root
+content/
+  ru/              # Legacy Russian (preserved, not maintained)
+    lesson*.md     # All lesson*.md, module*.md from root
     pictures/      # All pictures/lessonXX/ directories
     README.md      # Explains this is legacy/historical
-  (Future: en-US/, uk-UA/ if locale-based organization adopted)
+  (Future: en/, uk/ if locale-based organization adopted)
 ```
 
-### Option 2: Organize as `_archive/ru-RU/` (Archived Localization)
+### Option 2: Organize as `_archive/ru/` (Archived Localization)
 
 **Description**: Similar to Option 1, but uses `_archive/` prefix to more explicitly signal "not for active use."
-Creates `_archive/ru-RU/` containing all legacy Russian content.
+Creates `_archive/ru/` containing all legacy Russian content.
 
 **Pros**:
 
@@ -130,15 +131,15 @@ Creates `_archive/ru-RU/` containing all legacy Russian content.
 
 **Cons**:
 
-- **Less elegant than `locales/`**: Archive structure doesn't map to standard i18n patterns
-- **Harder to revive**: If `ru-RU` support returns, content is in "archive" not "locales"
+- **Less elegant than `content/`**: Archive structure doesn't map to standard i18n patterns
+- **Harder to revive**: If `ru` support returns, content is in "archive" not "locales"
 - **Repository size unchanged**: All legacy content remains
 
 **Structure Example**:
 
 ```
 _archive/
-  ru-RU/
+  ru/
     lessons/
     pictures/
     README.md
@@ -185,7 +186,7 @@ directing contributors to `/src/` for active content.
 ### Option 5: Comprehensive Locale Reorganization
 
 **Description**: Beyond handling legacy content, reorganize ALL content (including active `/src/`) into locale-based
-structure: `locales/en-US/`, `locales/uk-UA/`, `locales/ru-RU/`. This is the most comprehensive approach.
+structure: `content/en/`, `content/uk/`, `content/ru/`. This is the most comprehensive approach.
 
 **Pros**:
 
@@ -215,14 +216,14 @@ Recommended decision approach:
 
 **Recommended preference (for legacy content):**
 
-- **Primary recommendation**: **Option 1** (`locales/ru-RU/`)
+- **Primary recommendation**: **Option 1** (`content/ru/`)
     - Respectfully preserves Russian content as complete historical artifact
     - Establishes foundation for future locale organization
     - Colocates related content and assets
     - Maintains git history
     - Cleaner conceptual model than "archive"
 
-- **Alternative**: **Option 2** (`_archive/ru-RU/`) if stronger "frozen" signal is desired
+- **Alternative**: **Option 2** (`_archive/ru/`) if stronger "frozen" signal is desired
 
 Decision should consider:
 
@@ -271,32 +272,32 @@ General consequence categories based on likely options:
 
 Potential implementation for each option:
 
-**Option 1 (locales/ru-RU/):**
+**Option 1 (content/ru/):**
 
 1. Create directory structure:
    ```
-   locales/
-     ru-RU/
+   content/
+     ru/
        lessons/
        pictures/
    ```
 2. Move legacy content:
-    - `git mv` all root `*.md` files (except `AGENTS.md`, `CLAUDE.md`) → `locales/ru-RU/lessons/`
-    - `git mv pictures/lesson01/ pictures/lesson02/ pictures/lesson08/` → `locales/ru-RU/pictures/`
-3. Create `locales/ru-RU/README.md` explaining:
+    - `git mv` all root `*.md` files (except `AGENTS.md`, `CLAUDE.md`) → `content/ru/lessons/`
+    - `git mv pictures/lesson01/ pictures/lesson02/ pictures/lesson08/` → `content/ru/pictures/`
+3. Create `content/ru/README.md` explaining:
     - This is the original Russian course (legacy, preserved for history)
     - Not actively maintained
     - Represents project foundation and historical artifact
     - Active course is in `/src/` (English/Ukrainian)
 4. Update root `README.md`:
     - Clarify repository structure
-    - Note legacy Russian content in `locales/ru-RU/`
+    - Note legacy Russian content in `content/ru/`
     - Direct contributors to `/src/` for active content
 5. Update `.gitignore` if needed (ensure locale directories are tracked)
 
-**Option 2 (_archive/ru-RU/):**
+**Option 2 (_archive/ru/):**
 
-Similar to Option 1, but use `_archive/ru-RU/` path instead of `locales/ru-RU/`.
+Similar to Option 1, but use `_archive/ru/` path instead of `content/ru/`.
 
 **Option 3 (Delete):**
 
