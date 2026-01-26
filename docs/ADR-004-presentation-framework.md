@@ -8,17 +8,19 @@
 [rejected]: https://img.shields.io/badge/document_status-rejected-red.svg
 [final]: https://img.shields.io/badge/document_status-final-blue.svg
 [//]: # (@formatter:on)
-![status][draft]
+![status][accepted]
 
 <details>
 <summary>Document Changelog</summary>
 
 [//]: # (order by version number descending)
 
-| ver. | Date       | Author                                    | Changes description |
-|------|------------|-------------------------------------------|---------------------|
-| 0.2  | 2026-01-25 | Serhii Horodilov                          | Fix links and typos |
-| 0.1  | 2026-01-25 | Claude Sonnet 4.5 <noreply@anthropic.com> | Initial draft       |
+| ver. | Date       | Author                                    | Changes description  |
+|------|------------|-------------------------------------------|----------------------|
+| 1.0  | 2026-01-26 | Serhii Horodilov                          | Accepted             |
+| 0.3  | 2026-01-26 | Claude Sonnet 4.5 <noreply@anthropic.com> | Complete final draft |
+| 0.2  | 2026-01-25 | Serhii Horodilov                          | Fix links and typos  |
+| 0.1  | 2026-01-25 | Claude Sonnet 4.5 <noreply@anthropic.com> | Initial draft        |
 
 </details>
 
@@ -186,132 +188,187 @@ dependency in `package.json` and use build tools to bundle it.
 
 ## Decision
 
-**[DECISION PENDING - DRAFT STATUS]**
+**Decision:** **Option 5 (npm Dependency)** - Lowest-effort implementation
 
-**Critical First Step**: Determine whether impress.js presentations are actively used in current course delivery:
+**Findings:**
 
-1. **Search for usage**: Check `/src/` for any `.html` files or references to impress.js
-2. **Review course structure**: Confirm if presentations are part of pedagogy
-3. **Consult project history**: Determine if presentations were legacy Russian course feature
+After verification, exactly **one presentation exists** in the repository at `src/rdbms/presentations/`.
 
-**Recommended decision based on usage:**
+**Rationale:**
 
-- **If NOT actively used**: **Option 2** (Remove and Use CDN)
-    - Cleanest solution with maximum benefit
-    - CDN fallback available if presentations are added later
-    - Dramatic repository size reduction
+1. **Keep presentation in the main repository**: No need for a separate submodule or repository
+2. **Remove vendored impress.js submodule**: Eliminates 95%+ of assets directory bloat (~33,000+ lines)
+3. **Add impress.js as npm build dependency**: Modern dependency management using existing package.json
+4. **Leverage existing webpack setup**: Zero new tooling required; webpack 5 already configured
 
-- **If actively used but infrequently**: **Option 2** (Remove and Use CDN) or **Option 5** (npm Dependency)
-    - CDN is simpler if just serving HTML presentations
-    - npm is better if presentations are built/compiled
+**Why Option 5 (npm Dependency):**
 
-- **If actively used extensively**: **Option 5** (npm Dependency)
-    - Proper dependency management
-    - Version control and update path clear
+- **Matches existing pattern**: Project already uses npm for dependencies (mermaid@10.8.0, webpack tooling)
+- **Leverages existing infrastructure**: Webpack 5 + html-webpack-plugin already in place
+- **Self-contained development**: Works offline (unlike the CDN approach in Option 2)
+- **Version locked**: package-lock.json ensures consistency across environments
+- **Minimal implementation effort**: Single line addition to package.json + HTML import update
+- **Future-proof**: If more presentations are added, infrastructure is ready
+- **Dramatic size reduction**: Removes 95%+ of the assets directory
+- **Standard workflow**: Contributors already familiar with npm (mermaid pattern)
 
-Decision should be made after:
+**Implementation Approach, Lowest Effort:**
 
-1. Confirming current usage of impress.js in course materials
-2. Understanding presentation requirements (if any) for course delivery
-3. Assessing whether a CDN-based approach meets all needs
+1. Add `impress.js` as dependency to package.json (one line)
+2. Update presentation HTML to import from the npm package (simple path change)
+3. Remove git submodule at `/assets/impress.js/` (cleanup)
+4. Existing webpack configuration handles bundling automatically (zero config changes)
+
+**Estimated Implementation Time:** 5--10 minutes
+
+**Dependencies Resolved:**
+
+This decision removes the blocker for ADR-002 (SSG Replacement), as presentation requirements are now clarified and
+asset organization is simplified.
 
 ## Consequences
 
-**[TO BE DETERMINED AFTER DECISION]**
+**Based on Chosen Option 5 (npm Dependency):**
 
-General consequence categories based on likely options:
+### Positive
 
-### Positive (if Option 2 or 5 is chosen)
+- **Dramatic repository size reduction**: Removes 95%+ of the assets directory (~33,000+ lines from tree)
+- **Faster clone times**: Significantly improved contributor onboarding experience
+- **Modern dependency management**: Uses npm ecosystem properly, matches an existing mermaid pattern
+- **Clearer project structure**: Assets directory contains only actual course assets
+- **Reduced maintenance burden**: npm handles library updates via standard tooling
+- **Version control**: Exact version pinning in package.json and package-lock.json
+- **Self-contained development**: Works offline during development (unlike the CDN approach)
+- **Minimal migration effort**: Leverages existing webpack configuration, zero new tooling
+- **No learning curve**: Contributors already familiar with npm workflow from mermaid
 
-- Dramatic repository size reduction (95%+ of assets directory)
-- Faster clone times for all contributors
-- Modern dependency management approach
-- Clearer project structure
-- Reduced maintenance burden
+### Negative
 
-### Negative (if Option 2 is chosen)
-
-- Requires internet for presentations (minor - course is web-delivered)
-- Migration effort for existing presentation HTML (if any)
-- External dependency on CDN
-
-### Negative (if Option 5 is chosen)
-
-- Requires build tooling setup
-- Additional complexity in the development workflow
-- Learning curve for contributors unfamiliar with npm
+- **One-time migration effort**: ~5--10 minutes to update presentation HTML and remove submodule
+- **Dependency added**: Project now has one additional npm dependency (minimal impact)
+- **Build process required**: Presentation now requires `npm install` and webpack build (already required for mermaid
+  and other assets)
 
 ### Neutral
 
-- No impact on course content if presentations are not used
-- Potential for future presentation features remains open
+- **No impact on course content**: Single presentation continues to work identically after migration
+- **Future presentations enabled**: Infrastructure ready if more presentations are added
+- **Webpack requirement unchanged**: Build tooling already in place for existing dependencies
 
 ## Implementation
 
-**[TO BE DEFINED AFTER DECISION]**
+**Chosen Implementation: Option 5 (npm Dependency), Lowest Effort Approach**
 
-Potential implementation for each option:
+### Step-by-Step Implementation:
 
-**Option 1 (Keep As-Is):**
+**1. Add impress.js as `npm` dependency:**
 
-1. Document why local copy is necessary
-2. Establish an update schedule if actively maintained
-3. Accept repository size impact
+```bash
+npm install impress.js --save
+```
 
-**Option 2 (Remove and Use CDN):**
+This updates `package.json`:
 
-1. Search repository for impress.js usage:
-   ```bash
-   find . -name "*.html" -exec grep -l "impress" {} \;
-   ```
-2. If presentations exist, update HTML to use CDN:
-   ```html
-   <script src="https://cdn.jsdelivr.net/gh/impress/impress.js@2.0.0/js/impress.js"></script>
-   ```
-3. Remove directory:
-   ```bash
-   git rm -r assets/impress.js/
-   ```
-4. Update documentation noting CDN usage for presentations
+```json
+{
+    "dependencies": {
+        "@mermaid-js/mermaid-cli": "^10.8.0",
+        "mermaid": "^10.8.0",
+        "impress.js": "^2.0.0"
+        // New dependency
+    }
+}
+```
 
-**Option 3 (Extract to Separate Repository):**
+**2. Update presentation HTML** (in `src/rdbms/presentations/`):
 
-1. Create new repository: `pymastery-presentations`
-2. Move impress.js with history:
-   ```bash
-   git subtree split --prefix=assets/impress.js/ -b presentations-only
-   ```
-3. Push to a new repository
-4. Remove from the main repository
-5. Document in README how to access presentations repository if needed
+**Before** (vendored submodule reference):
 
-**Option 4 (Archive):**
+```html
 
-1. Create `_archive/` directory
-2. Move impress.js:
-   ```bash
-   git mv assets/impress.js/ _archive/impress.js/
-   ```
-3. Create `_archive/README.md` explaining archived content
-4. Update root README to note archive location
+<script src="../../../assets/impress.js/js/impress.js"></script>
+```
 
-**Option 5 (npm Dependency):**
+**After** (npm package reference):
 
-1. Initialize package.json if not exists:
-   ```bash
-   npm init -y
-   ```
-2. Add impress.js as a dependency:
-   ```bash
-   npm install --save impress.js
-   ```
-3. Set up build tooling (webpack/rollup/etc.) if needed
-4. Update HTML to reference a bundled version
-5. Remove `/assets/impress.js/` directory:
-   ```bash
-   git rm -r assets/impress.js/
-   ```
-6. Update documentation on development workflow
+*Option 2a: Direct import in HTML:*
+
+```html
+
+<script src="impress.js"></script>
+```
+
+*Option 2b: Create presentation.js entry point (recommended):*
+
+```javascript
+// src/rdbms/presentations/presentation.js
+import 'impress.js';
+```
+
+Then reference in HTML:
+
+```html
+
+<script src="presentation.js"></script>
+```
+
+**3. Remove git submodule:**
+
+```bash
+git submodule deinit assets/impress.js
+git rm assets/impress.js
+rm -rf .git/modules/assets/impress.js
+```
+
+**4. Verify build:**
+
+```bash
+npm install
+npm run build
+```
+
+Existing webpack configuration will automatically bundle impress.js with the presentation.
+
+**5. Test presentation:**
+
+```bash
+npm start  # Development server
+# OR
+npm run build  # Production build
+```
+
+Navigate to the presentation location and verify impress.js functionality.
+
+---
+
+### Technical Details:
+
+- **Webpack configuration**: No changes required, existing html-webpack-plugin handles bundling
+- **Version pinning**: Locked to `impress.js@2.0.0` in package-lock.json
+- **Build output**: Presentation HTML with bundled impress.js in the output directory
+- **Development workflow**: `npm start` for dev server, `npm run build` for production
+
+---
+
+### Rollback Plan:
+
+If issues arise, the presentation can temporarily reference CDN:
+
+```html
+
+<script src="https://cdn.jsdelivr.net/gh/impress/impress.js@2.0.0/js/impress.js"></script>
+```
+
+---
+
+### Success Criteria:
+
+- ✅ Repository size reduced by ~95% in the assets directory
+- ✅ Presentation loads and functions correctly
+- ✅ Build process completes without errors
+- ✅ No git submodule references remain
+- ✅ package.json and package-lock.json updated
+- ✅ Contributors can clone and build without additional steps beyond standard `npm install`
 
 ## Related
 
