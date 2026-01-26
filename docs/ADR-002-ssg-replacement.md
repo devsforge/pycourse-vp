@@ -55,8 +55,9 @@ documentation, several issues have emerged that motivate reconsidering this choi
 - Should maintain professional documentation quality
 - Should support code highlighting, admonitions, and other common documentation features
 
-**Note:** This decision is interdependent with ADR-003 (Repository File Structure). The chosen SSG may have specific
-expectations about directory structure, and the migration effort will vary based on how legacy content is handled.
+> [!IMPORTANT]
+> This decision is interdependent with ADR-003 (Repository File Structure). The chosen SSG may have specific
+> expectations about directory structure, and the migration effort will vary based on how legacy content is handled.
 
 ## Decision Drivers
 
@@ -235,6 +236,14 @@ Implementation will likely include:
 
 ## Related
 
-- ADR-003: Repository File Structure (interdependent - structure decision affects migration effort)
-- ADR-004: Presentation Framework Handling (may affect asset requirements and SSG choice)
-- ADR-001: AI Guidelines Structure and Administration Framework
+- [ADR-003][ADR-003]: Repository File Structure (interdependent - structure decision affects migration effort)
+- [ADR-004][ADR-004]: Presentation Framework Handling (may affect asset requirements and SSG choice)
+- [ADR-001][ADR-001]: AI Guidelines Structure and Administration Framework
+
+[//]: # (@formatter:off)
+<!-- ADR references -->
+[ADR-001]: ./ADR-001-ai-guidelines-structure.md
+[ADR-002]: ./ADR-002-ssg-replacement.md
+[ADR-003]: ./ADR-003-repo-file-structure.md
+[ADR-004]: ./ADR-004-presentation-framework.md
+[//]: # (formatter:on)

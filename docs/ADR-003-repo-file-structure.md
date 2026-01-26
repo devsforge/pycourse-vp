@@ -62,9 +62,9 @@ been translated to English with Ukrainian support, and content has been reorgani
 kept in place during initial translation work but have not been organized as a complete, preserved historical artifact
 representing the original `ru-RU` localization.
 
-**Note:** This decision is interdependent with ADR-002 (SSG Replacement). The chosen SSG may have expectations about
-content location (e.g., `docs/`, `content/`, `src/`), and conversely, the structure decision affects SSG migration
-effort.
+> [!IMPORTANT]
+> This decision is interdependent with ADR-002 (SSG Replacement). The chosen SSG may have expectations about content
+> location (e.g., `docs/`, `content/`, `src/`), and conversely, the structure decision affects SSG migration effort.
 
 ## Decision Drivers
 
@@ -318,7 +318,15 @@ Similar to Option 1, but use `_archive/ru-RU/` path instead of `locales/ru-RU/`.
 
 ## Related
 
-- ADR-002: Static Site Generator Replacement (interdependent – SSG may have i18n/locale expectations)
-- ADR-004: Presentation Framework Handling (may affect assets directory organization)
-- ADR-001: AI Guidelines Structure and Administration Framework
+- [ADR-002][ADR-002]: Static Site Generator Replacement (interdependent – SSG may have i18n/locale expectations)
+- [ADR-004][ADR-004]: Presentation Framework Handling (may affect assets directory organization)
+- [ADR-001][ADR-001]: AI Guidelines Structure and Administration Framework
 - Upstream repository: [URL to be documented]
+
+[//]: # (@formatter:off)
+<!-- ADR references -->
+[ADR-001]: ./ADR-001-ai-guidelines-structure.md
+[ADR-002]: ./ADR-002-ssg-replacement.md
+[ADR-003]: ./ADR-003-repo-file-structure.md
+[ADR-004]: ./ADR-004-presentation-framework.md
+[//]: # (formatter:on)

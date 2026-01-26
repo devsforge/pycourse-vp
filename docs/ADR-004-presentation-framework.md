@@ -65,7 +65,8 @@ The impress.js framework was likely added for creating presentation-style course
 unclear whether this feature is actively used in the current course structure or if presentations were part of the
 legacy Russian version that has since been deprecated.
 
-**Note:** This decision may impact ADR-002 (SSG Replacement) if presentations are part of course delivery requirements.
+> [!IMPORTANT]
+> This decision may impact ADR-002 (SSG Replacement) if presentations are part of course delivery requirements.
 
 ## Decision Drivers
 
@@ -119,12 +120,11 @@ from a CDN (e.g., cdnjs, jsDelivr) in HTML files.
 - **Version changes**: CDN updates might break presentations (mitigated by version pinning)
 - **Migration effort**: Update existing presentation HTML to reference CDN
 
-**Implementation Note**: Use version-pinned CDN URLs like:
-
-```html
-
-<script src="https://cdn.jsdelivr.net/gh/impress/impress.js@2.0.0/js/impress.js"></script>
-```
+> [!NOTE]
+> Use version-pinned CDN URLs like:
+> ```html
+> <script src="https://cdn.jsdelivr.net/gh/impress/impress.js@2.0.0/js/impress.js"></script>
+> ```
 
 ### Option 3: Extract to Separate Repository
 
@@ -315,6 +315,14 @@ Potential implementation for each option:
 
 ## Related
 
-- ADR-002: Static Site Generator Replacement (may affect presentation delivery approach)
-- ADR-003: Repository File Structure (affects overall assets organization)
-- ADR-001: AI Guidelines Structure and Administration Framework
+- [ADR-002][ADR-002]: Static Site Generator Replacement (may affect presentation delivery approach)
+- [ADR-003][ADR-003]: Repository File Structure (affects overall assets organization)
+- [ADR-001][ADR-001]: AI Guidelines Structure and Administration Framework
+
+[//]: # (@formatter:off)
+<!-- ADR references -->
+[ADR-001]: ./ADR-001-ai-guidelines-structure.md
+[ADR-002]: ./ADR-002-ssg-replacement.md
+[ADR-003]: ./ADR-003-repo-file-structure.md
+[ADR-004]: ./ADR-004-presentation-framework.md
+[//]: # (formatter:on)
