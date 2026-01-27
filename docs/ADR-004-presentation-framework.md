@@ -17,7 +17,6 @@
 
 | ver. | Date       | Author                                    | Changes description  |
 |------|------------|-------------------------------------------|----------------------|
-| 1.0  | 2026-01-26 | Serhii Horodilov                          | Accepted             |
 | 0.3  | 2026-01-26 | Claude Sonnet 4.5 <noreply@anthropic.com> | Complete final draft |
 | 0.2  | 2026-01-25 | Serhii Horodilov                          | Fix links and typos  |
 | 0.1  | 2026-01-25 | Claude Sonnet 4.5 <noreply@anthropic.com> | Initial draft        |
