@@ -8,20 +8,21 @@
 [rejected]: https://img.shields.io/badge/document_status-rejected-red.svg
 [final]: https://img.shields.io/badge/document_status-final-blue.svg
 [//]: # (@formatter:on)
-![status][draft]
+![status][final]
 
 <details>
 <summary>Document Changelog</summary>
 
 [//]: # (order by version number descending)
 
-| ver. | Date       | Author                                    | Changes description                             |
-|------|------------|-------------------------------------------|-------------------------------------------------|
-| 0.5  | 2026-01-27 | Serhii Horodilov                          | Fix typos and formatting                        |
-| 0.4  | 2026-01-27 | Claude Sonnet 4.5 <noreply@anthropic.com> | Technical corrections per implementation review |
-| 0.3  | 2026-01-26 | Claude Sonnet 4.5 <noreply@anthropic.com> | Complete final draft                            |
-| 0.2  | 2026-01-25 | Serhii Horodilov                          | Fix links and typos                             |
-| 0.1  | 2026-01-25 | Claude Sonnet 4.5 <noreply@anthropic.com> | Initial draft                                   |
+| ver. | Date       | Author                                    | Changes description                               |
+|------|------------|-------------------------------------------|---------------------------------------------------|
+| 0.6  | 2026-01-27 | Claude Sonnet 4.5 <noreply@anthropic.com> | Final review improvements and status finalization |
+| 0.5  | 2026-01-27 | Serhii Horodilov                          | Fix typos and formatting                          |
+| 0.4  | 2026-01-27 | Claude Sonnet 4.5 <noreply@anthropic.com> | Technical corrections per implementation review   |
+| 0.3  | 2026-01-26 | Claude Sonnet 4.5 <noreply@anthropic.com> | Complete final draft                              |
+| 0.2  | 2026-01-25 | Serhii Horodilov                          | Fix links and typos                               |
+| 0.1  | 2026-01-25 | Claude Sonnet 4.5 <noreply@anthropic.com> | Initial draft                                     |
 
 </details>
 
@@ -67,7 +68,7 @@ development friction and maintenance challenges.
 3. **Maintenance overhead**: Requires keeping a library updated if actively used
 4. **Unclear necessity**: No clear documentation of why git submodule is required vs. npm package
 5. **Development friction**: Submodule workflow adds complexity for presentation features
-6. **Backup inefficiency**: Submodule references to require special handling in backups
+6. **Backup inefficiency**: Submodule references require special handling in backups
 
 **Historical Context:**
 
@@ -311,9 +312,16 @@ import 'impress.js';
 ```
 
 > [!IMPORTANT]
-> **Technical Detail:** The presentation HTML files reference webpack's **bundled output** (e.g.,
-`dist/presentation.js`), not npm package names directly. Changes are made to JavaScript import statements in webpack
-> entry points, which webpack then bundles for browser consumption.
+> **Technical Detail:** The presentation HTML files reference webpack's **bundled output**
+> (e.g., `dist/presentation.js`), not npm package names directly.
+> Changes are made to JavaScript import statements in webpack entry points, which webpack then bundles for browser
+> consumption.
+
+> [!NOTE]
+> **CSS Dependencies:** If the presentation uses impress.js CSS files, update those import paths as well following the
+> same pattern. For example:
+> - Before: `import '../assets/impress.js/css/impress-demo.css';`
+> - After: `import 'impress.js/css/impress-demo.css';`
 
 **3. Remove git submodule:**
 
@@ -340,7 +348,13 @@ npm start  # Development server
 npm run build  # Production build
 ```
 
-Navigate to the presentation location and verify impress.js functionality.
+**Verification Checklist:**
+
+- ✅ Presentation loads without console errors
+- ✅ Slide navigation works (arrow keys, click targets)
+- ✅ Visual styles render correctly (no missing CSS)
+- ✅ Transitions/animations function as expected
+- ✅ No webpack bundling errors in build output
 
 ---
 
@@ -355,12 +369,25 @@ Navigate to the presentation location and verify impress.js functionality.
 
 ### Rollback Plan:
 
-If issues arise, the presentation can temporarily reference CDN:
+If issues arise during or after implementation, use one of the following rollback strategies:
+
+**Option 1: Temporary CDN Reference** (Quick fix for broken presentation):
 
 ```html
 
 <script src="https://cdn.jsdelivr.net/gh/impress/impress.js@2.0.0/js/impress.js"></script>
 ```
+
+This provides immediate functionality while investigating npm/webpack issues.
+
+**Option 2: Restore Git Submodule** (If npm approach is fundamentally incompatible):
+
+```bash
+git revert [commit-hash]  # Revert the submodule removal commit
+git submodule update --init --recursive
+```
+
+This restores the original submodule-based setup completely.
 
 ---
 
