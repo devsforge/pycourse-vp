@@ -407,7 +407,7 @@ Reorganization is considered successful when all the following are met:
 - [ ] `/assets/` unchanged at root
 - [ ] The root directory contains only infrastructure files
 - [ ] `content/ru/README.md` clearly explains legacy status
-- [ ] Root `README.md` updated with structure information
+- [ ] Root `README.rst` updated with structure information
 - [ ] `.ai/config.yaml` updated with new paths
 - [ ] Sphinx configuration updated and built successfully
 - [ ] Git history preserved for all moved files (verified with `git log --follow`)
