@@ -8,7 +8,7 @@
 [rejected]: https://img.shields.io/badge/document_status-rejected-red.svg
 [final]: https://img.shields.io/badge/document_status-final-blue.svg
 [//]: # (@formatter:on)
-![status][draft]
+![status][accepted]
 
 <details>
 <summary>Document Changelog</summary>
@@ -17,6 +17,7 @@
 
 | ver. | Date       | Author                                    | Changes description                      |
 |------|------------|-------------------------------------------|------------------------------------------|
+| 1.0  | 2026-01-27 | Serhii Horodilov                          | Accepted                                 |
 | 0.7  | 2026-01-27 | Claude Sonnet 4.5 <noreply@anthropic.com> | Revise Implementation to high-level only |
 | 0.6  | 2026-01-26 | Serhii Horodilov                          | Fix typos                                |
 | 0.5  | 2026-01-26 | Claude Sonnet 4.5 <noreply@anthropic.com> | Complete final draft with decision       |
@@ -364,10 +365,6 @@ If critical issues emerge during migration:
 2. Sphinx environment preserved in git history — reversion possible at any time
 3. Migration can be paused while maintaining Sphinx in the short term
 4. No merge to `main` until full validation complete
-
-### Estimated Effort
-
-Based on scope and complexity: **5--7 working days** for comprehensive migration including testing and documentation.
 
 ## Related
 

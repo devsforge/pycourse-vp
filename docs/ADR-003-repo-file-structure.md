@@ -8,7 +8,7 @@
 [rejected]: https://img.shields.io/badge/document_status-rejected-red.svg
 [final]: https://img.shields.io/badge/document_status-final-blue.svg
 [//]: # (@formatter:on)
-![status][final]
+![status][accepted]
 
 <details>
 <summary>Document Changelog</summary>
@@ -17,6 +17,7 @@
 
 | ver. | Date       | Author                                    | Changes description                               |
 |------|------------|-------------------------------------------|---------------------------------------------------|
+| 1.0  | 2026-01-27 | Serhii Horodilov                          | Accepted                                          |
 | 0.11 | 2026-01-27 | Claude Sonnet 4.5 <noreply@anthropic.com> | Revise Implementation to high-level only          |
 | 0.10 | 2026-01-27 | Serhii Horodilov                          | Fix typos, final draft                            |
 | 0.9  | 2026-01-27 | Claude Sonnet 4.5 <noreply@anthropic.com> | Expand scope to comprehensive repo reorganization |
@@ -418,15 +419,15 @@ Reorganization is considered successful when all the following are met:
 
 The executor should be aware of and prepare for these risks:
 
-| Risk                             | Impact | Mitigation Strategy                            |
-|----------------------------------|--------|------------------------------------------------|
-| Unintended file moves            | High   | Careful inventory and verification at each step |
+| Risk                             | Impact | Mitigation Strategy                               |
+|----------------------------------|--------|---------------------------------------------------|
+| Unintended file moves            | High   | Careful inventory and verification at each step   |
 | Git history loss                 | High   | Exclusive use of `git mv`; verify with `--follow` |
-| Broken Sphinx build              | Medium | Test build after path updates; iterate if needed |
-| Broken documentation references  | Medium | Comprehensive search for hardcoded paths        |
-| Conflicting changes with ADR-002 | Medium | ADR-003 executes first; ADR-002 follows         |
-| Path reference issues            | Medium | Test all build and deployment processes         |
-| Contributor confusion            | Low    | Clear documentation and communication           |
+| Broken Sphinx build              | Medium | Test build after path updates; iterate if needed  |
+| Broken documentation references  | Medium | Comprehensive search for hardcoded paths          |
+| Conflicting changes with ADR-002 | Medium | ADR-003 executes first; ADR-002 follows           |
+| Path reference issues            | Medium | Test all build and deployment processes           |
+| Contributor confusion            | Low    | Clear documentation and communication             |
 
 ### Rollback Plan
 
@@ -437,11 +438,6 @@ If critical issues emerge:
 3. Git history preserved — original state always recoverable
 4. No merge to `main` until full validation complete
 5. Post-merge issues can be reverted (history allows reconstruction)
-
-### Estimated Effort
-
-Based on scope and complexity: **4--6 hours** for comprehensive reorganization including testing and documentation
-updates.
 
 ## Related
 
