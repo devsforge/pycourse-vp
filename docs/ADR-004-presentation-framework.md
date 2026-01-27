@@ -27,6 +27,16 @@
 
 </details>
 
+> [!NOTE]
+> **Scope of PR #238**: This ADR is part of a comprehensive documentation effort that introduces three interdependent
+> Architecture Decision Records:
+> - **ADR-002**: Static Site Generator Replacement (Sphinx → MkDocs)
+> - **ADR-003**: Repository File Structure (locale-based content organization)
+> - **ADR-004** (this document): Presentation Framework Handling (impress.js submodule → npm dependency)
+>
+> These ADRs address related aspects of the project's documentation infrastructure and should be reviewed together
+> to understand the full scope of changes being proposed.
+
 ## Context
 
 The repository currently includes impress.js as a **git submodule** at `/assets/impress.js/`, which references the

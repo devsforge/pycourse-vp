@@ -28,6 +28,16 @@
 
 </details>
 
+> [!NOTE]
+> **Scope of PR #238**: This ADR is part of a comprehensive documentation effort that introduces three interdependent
+> Architecture Decision Records:
+> - **ADR-002** (this document): Static Site Generator Replacement (Sphinx → MkDocs)
+> - **ADR-003**: Repository File Structure (locale-based content organization)
+> - **ADR-004**: Presentation Framework Handling (impress.js submodule → npm dependency)
+>
+> These ADRs address related aspects of the project's documentation infrastructure and should be reviewed together
+> to understand the full scope of changes being proposed.
+
 ## Context
 
 The project currently uses Sphinx as its static site generator. While Sphinx is powerful and widely used for technical
