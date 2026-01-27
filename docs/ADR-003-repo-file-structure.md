@@ -81,7 +81,7 @@ as a complete historical artifact.
 - **Locale-based organization**: Establish clear structure for multilingual content (`en`, `uk`, `ru`)
 - **Historical preservation**: Maintain complete legacy Russian content as historical artifact
 - **Content root naming**: Clear directory name signaling "this contains course content"
-- **Maintainability**: Reduce a cognitive load when navigating repository
+- **Maintainability**: Reduce cognitive load when navigating the repository
 - **Discoverability**: Clear separation between active and legacy content
 - **Content-asset colocation**: Keep related content and assets together within locales
 - **Build system compatibility**: Structure should support current and future SSG expectations (MkDocs)
