@@ -15,9 +15,9 @@ This course was originally created by Vladyslav Ponomaryov and contributors. The
 ## Structure
 
 - `lessons/` - Original lesson files (`.md` format) - lessons 01-36 and related content
-- `modules/` - Module summaries and overview documents
+- `modules/` - Module summaries and overview documents (module1, module2, module3)
 - `tasks/` - Exercise and homework assignments
-- `extras/` - Supplementary materials (explanations, guides, additional modules)
+- `extras/` - Supplementary materials (explanations and guides)
 - `pictures/` - Images and diagrams for legacy lessons
 
 ## Active Content

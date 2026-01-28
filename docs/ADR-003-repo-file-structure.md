@@ -122,15 +122,15 @@ content/                # Content root (renamed from src/)
     lessons/           # Root lesson*.md → here (lessons 01-36)
       lesson*.md
       before_postgres.md
-    modules/           # Module summaries
+    modules/           # Module summaries and overview documents
+      module1.md
+      module2.md
       module3.md
     tasks/             # Exercise and homework assignments
       tasks_block1.md
       tasks_block2.md
       web_homeworks.md
-    extras/            # Supplementary materials
-      module1.md
-      module2.md
+    extras/            # Supplementary materials (explanations and guides)
       pr_explanation.md
       pr_explanation_django.md
     pictures/          # /pictures/lessonXX/ → here
@@ -384,9 +384,9 @@ content/                # Content root (renamed from src/)
     subdirs/
   ru/                  # Legacy Russian content
     lessons/           # lesson*.md (lessons 01-36 and related)
-    modules/           # module3.md (module summaries)
+    modules/           # module1.md, module2.md, module3.md (module summaries)
     tasks/             # Exercise and homework assignments
-    extras/            # Supplementary materials (module1, module2, explanations)
+    extras/            # Supplementary materials (explanations and guides)
     pictures/          # lesson01/, lesson02/, lesson08/
     README.md
 
