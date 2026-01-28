@@ -1,0 +1,509 @@
+# Functions
+
+You may be familiar with the mathematical concept of a **function**. It is
+a relationship or mapping between one or more inputs and a set of outputs.
+
+$$z = f(x, y)$$
+
+Here `f` is a function that operates on the inputs `x` and `y`, and
+its output is bind to `z`.
+
+In programming a **function** is a self-contained block of code that
+encapsulate a specific task or related group of tasks.
+
+You may be familiar with some built-in functions like `max`, `min`, `len`
+etc.
+
+The usual syntax for defining a Python function is as follows:
+
+    def <function_name>([<parameters>]):
+        <statement>
+
+  -----------------------------------------------------------------------------
+  Component             Meaning
+  --------------------- -------------------------------------------------------
+  `def`                 The keyword that informs Python that a function is
+                        being defined
+
+  `<function_name>`     A valid Python identifier that names the function
+
+  `<parameters>`        An optional, comma-separated list of parameters that
+                        may be passed to the function
+
+  `<statement(s)>`      A block of valid Python statements;
+                        **body** of the function
+  -----------------------------------------------------------------------------
+
+The syntax for calling a Python function is as follows:
+
+    <function_name>([<arguments>])
+
+The `<arguments>` are the values passed into the function. They correspond
+to the `<parameters>` in the function definition. You can define a function
+that doesn\'t take any arguments, but the parentheses are still required. Both
+a function definition and a function call must always include parentheses,
+even if they\'re empty.
+
+## Argument passing
+
+More often, you want to **pass data into a function**.
+
+### Positional arguments
+
+!!! note
+
+
+    Because of the way they\'re defined and used, positional arguments are also
+    called *required arguments*.
+
+
+The most straightforward way to pass arguments to a function is with
+**positional arguments**.
+In the function definition, you specify a comma-separated list of parameters
+inside the parentheses.
+When the function is called, you specify a corresponding list of arguments.
+
+The parameters behave like **variables** that are defined locally to the
+function.
+
+Although positional arguments are the most straightforward way to pass data to
+a function, they also afford the least flexibility. For starters, the **order**
+of the arguments in the call must match the order of the parameters in the
+definition.
+
+There\'s nothing to stop you from specifying positional arguments out of order.
+The function even may still run, but it\'s very unlikely to produce the correct
+results.
+
+!!! note
+
+
+    It\'s responsibility of the programmer who defines the function to document
+    what the appropriate arguments should be, and it\'s the responsibility of
+    the user of the function to be aware of that information and abide by it.
+
+
+With positional arguments, the arguments in the call and the parameters in the
+definition must agree not only in order, but in number as well.
+
+### Keyword arguments
+
+When calling a function, you can specify arguments in the form
+`<keyword>=<value>`. In that case, each `<keyword>` must match a parameter
+in the function definition. Referencing a keyword that doesn\'t match any of
+these declared parameters generates an exception.
+
+Using keyword arguments lifts the restriction on arguments order. Each keyword
+argument explicitly designates a specific parameter by name, so you can specify
+them in any order and Python will still know which argument goes with which
+parameter.
+
+Like with positional arguments, though, the number of arguments and parameters
+must still match.
+
+You can call a function using both positional and keyword arguments.
+Once you\'ve specified a keyword argument, there can\'t be any positional
+arguments to the right of it.
+
+### Default values
+
+If a parameter specified in the function definition has the form of
+`<name>==<value>`, then `<value>` becomes a default value for that
+parameter. Parameters defined this way are referred to as
+**default or optional parameters**.
+
+**Mutable default parameter values**
+
+Things can get weird if you specify a default parameter value that is
+a mutable object.
+
+``` python
+>>> def add_to_container(item, container = []):
+...     container.append(item)
+...
+>>>
+>>> add_to_container(42, [1, 2, 3])
+[1, 2, 3, 42]
+>>> add_to_container("foobar", ["foo", "bar"])
+["foo", "bar", "foobar"]
+>>> add_to_container(42)
+[42]
+>>> add_to_container("foobar")  # ["foobar"]
+[42, "foobar"]
+```
+
+In Python default parameter values are **defined only once** when the function
+is defined. The default value isn\'t re-defined each time the function is
+called. For the example above, each time the `add_to_container` function is
+called without passing `container` argument, the `.append` statement is
+performed on the same list.
+
+### Mutable and immutable arguments
+
+!!! note
+
+
+    Roughly, you may consider immutable object as passed-by-value,
+    and mutable objects as passed-by-reference.
+    However, that\'s not actual true.
+
+
+In programming language design, there are two common paradigms for passing an
+argument to a function:
+
+-   **pass-by-value** means a copy of the argument is passed to the function.
+-   **pass-by-reference** means a reference to the argument is passed to
+    the function.
+
+Are parameters in Python pass-by-value or pass-by-reference? They\'re neither,
+exactly. That\'s because a reference doesn\'t mean quite the same thing in
+Python as it does in C-like languages.
+
+Recall that in Python, every piece of data is an **object**. A reference points
+to an object, not a specific memory location.
+
+Take a look on the code below:
+
+``` {.python linenos=""}
+value = 24
+value = 42
+```
+
+These assignment statements have the following meaning:
+
+-   **Line 1** cause `value` to point to an object whose value is `24`.
+-   **Line 2** reassign `value` as a new reference to a different object
+    whose value is `42`.
+
+In Python, when you pass an argument to a function, a similar *rebinding*
+occurs.
+
+``` {.python linenos=""}
+def reassign(fx: int) -> None:
+    fx = 10
+
+
+x = 5
+reassign(x)
+```
+
+In the main program, the statement `x = 5` on line 5 creates a reference
+named `x` bound to an object whose value is `5`.
+`reassign` is then called on line 6 with `x` as its argument.
+When a function first starts, a new reference called `fx` is created, which
+initially points to the same `5` object. However, when the statement
+`fx = 10` on line 2 is executed, `reassign` rebinds `fx` to a new
+object whose value is `10`. From now, the two references `x` and `fx` are
+uncoupled one from another. Nothing else that function does will affect `x`,
+and when function terminates, `x` will still point to the object `5`, as it
+did prior to the function call.
+
+You can confirm all this using `id()`. Here\'s a slightly augmented version of
+the code above:
+
+``` {.python linenos=""}
+def reassign(fx: int) -> None:
+    print(f"{fx = }, {id(fx) = }")
+    fx = 10
+    print(f"{fx = }, {id(fx) = }")
+
+
+x = 5
+print(f"{x = }, {id(x) = }")
+reassign(x)
+print(f"{x = }, {id(x) = }")
+```
+
+The outputs will look like:
+
+    x = 5, id(x) = 140706772804520
+    fx = 5, id(fx) = 140706772804520
+    fx = 42, id(fx) = 140706772805704
+    x = 5, id(x) = 140706772804520
+
+!!! note
+
+
+    Python\'s argument-passing mechanism has been called **pass-by-assignment**.
+    You may also see terms pass-by-object, pass-by-object-reference, or
+    pass-by-sharing. This is because parameter names are bound to objects on
+    function entry in Python, and assignment is also the process of binding
+    a name to an object.
+
+
+The key takeaway here is that Python function can\'t change the value of an
+argument by reassigning the corresponding parameter to something else.
+
+However, functions can use references to make modifications inside of a mutable
+objects.
+
+``` {.python linenos=""}
+>>> def insert_into_container(item, container, idx = 0):
+...    container.insert(idx, item)
+...
+>>>
+>>> numbers = [1, 2, 3]
+>>> insert_into_container(42, numbers)
+>>> numbers
+[42, 1, 2, 3]
+```
+
+## The return statement
+
+It serves two purposes:
+
+-   It immediately terminates the function and passes execution control back
+    to the caller.
+-   It provides a mechanism by which the function can pass data back
+    to the caller.
+
+The return statement can be used inside of a function or a method to send
+the result back to the caller. It consists of the `return` Python keyword
+and an optional return value.
+
+The return value of a Python function can be any Python object (and you should
+remember - everything in Python is an object).
+
+You can omit the return value and use bare `return` without a return value.
+You can also omit the entire `return` statement. In both cases, the return
+value will be `None`. So, Python functions always have the return value; in
+case it hasn\'t been specified - it\'s `None`.
+
+!!! important
+
+
+    **Returning vs Printing**
+
+    If you\'re working in an interactive session, then you might think that
+    printing a value and returning a value are equivalent.
+    Consider the following two functions:
+
+    ``` python
+    from typing import List
+
+
+    def print_evens(numbers: List[int]) -> None:
+        print([number for number in numbers if not number % 2])
+
+
+    def return_evens(numbers: List[int]) -> List[int]:
+        return [number for number in numbers if not number % 2]
+    ```
+
+    And their output:
+
+        >>> print_evens([1, 2, 3, 4, 5, 6, 7, 8, 9])
+        [2, 4, 6, 8]
+        >>> return_evens([1, 2, 3, 4, 5, 6, 7, 8, 9])
+        [2, 4, 6, 8]
+
+    Both functions seems to do the same thing. But only the second one
+    function actually returns a value, when the first one returns nothing
+    (or **NoneType object**).
+
+
+### Return multiple values
+
+You can use a return statement to return multiple values from a function.
+To do that, you just need to supply several return values separated by commas.
+The function will return a tuple of values.
+
+``` python
+import statistics as st
+
+
+def describe(data):
+    return st.mean(data), st.median(data), st.mode(data)
+
+
+sample = [8, 1, 9, 1, 4, 6, 1, 9, 8, 3]
+mean, median, mode = describe(sample)
+```
+
+The built-in `divmod` function is also an example of a function that returns
+multiple values. The function takes two (non-complex) numbers as arguments and
+returns two numbers, the quotient of the two input values and the remainder of
+the division.
+
+## Variable-length argument list
+
+In some cases, when you\'re defining a function, you may not know beforehand how
+many arguments you\'ll want it to take.
+
+For example, a function that computes an average of several values may look
+something like this:
+
+``` python
+def avg(a, b, c):
+    return (a + b + c) / 3
+```
+
+However, as you\'re already seen, when positional arguments are used, the number
+of arguments passed must match the number of parameters declared.
+
+### Argument tuple packing
+
+When a parameter name in a function definition is preceded by an asterisk (\*),
+it indicates **argument tuple packing**. Any corresponding arguments in
+a function call are packed into a tuple that the function can refer to by
+the given parameter name.
+
+``` python
+def avg(*args):
+    return sum(args) / len(args)
+```
+
+Any name can be used, but *args* is so commonly chosen that it\'s practically
+a standard.
+
+### Argument tuple unpacking
+
+An analogous operation is available on the other side of the equation in
+a function call. When an argument in a function call is preceded by an asterisk,
+it indicates that the argument is a tuple that should be **unpacked** and
+passed to the function as separate values.
+
+``` python
+def demo_args_unpacking(a, b, c):
+    print(f"{a = }, {b = }, {c = }")
+
+
+args = 10, 20, 30
+demo_args_unpacking(*args)
+```
+
+!!! note
+
+
+    Although this type of unpacking is called **tuple** unpacking, it doesn\'t
+    only work with tuples. The asterisk can be applied to any iterable in
+    a function call.
+
+    ``` python
+    arguments_list = [10, 20, 30]
+    demo_args_unpacking(*arguments_list)
+    arguments_set = {10, 20, 30}
+    demo_args_unpacking(*arguments_set)
+    arguments_str = "ABC"
+    demo_args_unpacking(*arguments_str)
+    ```
+
+
+!!! note
+
+
+    You can even do tuple packing and unpacking at the same time.
+
+    ``` python
+    def avg(*args) -> float:
+        return sum(args) / len(args)
+
+
+    numbers = 10, 20, 30
+    average = avg(*numbers)
+    ```
+
+
+### Argument dictionary packing
+
+Python has a similar operator, the double asterisk (\*\*), which can be used
+with function parameters to specify **dictionary packing**. Preceding parameter
+in a function definition be a double asterisk indicates that the corresponding
+arguments, which are expected to be keyword arguments (`key=value` pairs),
+should be packed into a dictionary.
+
+``` python
+def display_person(first_name: str, last_name: str, **kwargs) -> None:
+    print(f"{first_name.title()} {last_name.title()}")
+    for key, value in kwargs.items():
+        print(f"{key}:\t{value}")
+
+
+display_person("serhii", "horodilov", school="A-Level", course="Python")
+```
+
+Again, any name can be used, but the peculiar *kwargs* (which is short for
+*keyword args*) is nearly standard.
+
+### Argument dictionary unpacking
+
+This is analogous to argument tuple unpacking.
+When the double asterisk precedes an argument in a function call, it specifies
+that the argument is a dictionary that should be unpacked, with the resulting
+items passed to the function as keyword arguments.
+
+``` python
+person_data = {
+    "first_name": "Serhii",
+    "last_name": "Horodilov",
+    "school": "A-Level",
+    "course": "Python",
+    "school_occupation": "teacher/mentor",
+    "job_title": "Software Engineer",
+}
+display_person(**person_data)
+```
+
+## Lambda functions
+
+Lambda expressions in Python and other programming languages have their roots
+in lambda calculus, a model of computation invented by Alonzo Church.
+Python is not inherently a functional language, but it adopted some functional
+concepts early on. In January 1994, `map()`, `filter()`, `reduce()`, and
+the lambda operator were added to the language.
+
+General lambda function syntax is:
+
+    lambda [<parameters>]: <expression>
+
+  -----------------------------------------------------------------------------
+  Component             Meaning
+  --------------------- -------------------------------------------------------
+  `lambda`              The keyword that informs Python that a function is
+                        being defined
+
+  `<parameters>`        An optional, comma-separated list of parameters that
+                        may be passed to the function
+
+  `<expression>`        A valid Python expression; return statement
+  -----------------------------------------------------------------------------
+
+``` python
+def get_fullname(first_name: str, last_name: str):
+    return f"{first_name.title()} {last_name.title()}"
+
+
+lambda first_name, last_name: f"{first_name.title()} {last_name.title()}"
+```
+
+The code sample above demonstrates the `get_fullname` Python function and its
+lambda version. A lambda form presents syntactic distinctions from a normal
+function. In particular, a lambda function has the following characteristics:
+
+-   It can only contain expressions and can't include statements in its body.
+
+-   It is written as a single line of execution.
+
+-   It does not support type annotations.
+
+-   It can be immediately invoked
+    (IIFE (Immediately Invoked Function Execution)).
+
+    ``` python
+    (lambda number: "odd" if number % 2 else "even")(42)
+    ```
+
+**Classic functional constructs**
+
+``` python
+>>> # in-place data modifications
+>>> list(map(lambda x: x.upper(), ["foo", "bar", "foobar"]))
+["FOO", "BAR", "FOOBAR"]
+>>> # filtering values
+>>> list(filter(lambda x: not x % 2, [1, 2, 3, 4, 5, 6, 7]))
+[2, 4, 6]
+>>> # reduce values
+>>> from functools import reduce
+>>> reduce(lambda acc, x: acc ^ x, [1, 2, 3, 1234, 3, 2, 1])
+1234
+```

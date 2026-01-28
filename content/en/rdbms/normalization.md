@@ -1,0 +1,378 @@
+# Database Normalization
+
+Normalization is a process of organizing data in a database so that it is free
+from redundancy and dependency. It helps to eliminate data inconsistencies and
+anomalies, thereby improving data integrity. Normalization is a set of rules or
+guidelines to design a database schema in such a way that it avoids data
+duplication, data redundancy, and data inconsistency.
+
+The main purpose of database normalization is to avoid complexities, eliminate
+duplicates, and organize data in a consistent way. Normalization reduces data
+redundancy and dependency, making the database more efficient, flexible, and
+scalable. It also helps in maintaining data consistency and accuracy, and
+ensures that updates and deletions are properly handled.
+
+There are 6 + 3 **normal forms**, but this chapter focuses on the first 3 only,
+since the commonest normal form you\'ll see out there is *3NF* (third normal
+form).
+
+Normalized tables are:
+
+-   Easier to understand
+-   Easier to enhance and extend
+-   Protected from:
+    -   insertion anomalies
+    -   update anomalies
+    -   deletion anomalies
+
+## Anomalies
+
+### Insertion anomalies
+
+There are circumstances in which certain facts cannot be recorded at all.
+For example, each record in the \"Faculty and Their Courses\" relation might
+contain a *Faculty ID*, *Faculty Name* and *Course Code*. Therefore, the
+details of any faculty member who teaches at least one course can be recorded,
+but a newly hired faculty member who has not yet been assigned to teach any
+courses cannot be recorded, except by setting the course code to `null`.
+
++------------+----------------+-------------+
+| Faculty ID | Faculty Name   | Course Code |
++============+================+=============+
+| > 389      | Dr. Headstrong | ENG-206     |
++------------+----------------+-------------+
+| > 407      | Dr. Mugwort    | CMP-101     |
++------------+----------------+-------------+
+| > 407      | Dr. Mugwort    | CMP-201     |
++------------+----------------+-------------+
+
++------------+----------------+-------------+
+| Faculty ID | Faculty Name   | Course Code |
++============+================+=============+
+| > 389      | Dr. Newone     | ???         |
++------------+----------------+-------------+
+
+### Update anomalies
+
+The same information can be expressed on multiple rows; therefore updates to
+the relation may result in logical inconsistencies. For example, each record
+in an \"Employees\' Skills\" relation might contain ah *Employee ID*, *Employee
+Address*, and *Skill*; thus a charge of address for a particular employee may
+need to be applied to multiple records (one for each skill). If the update is
+only partially successful \-- the employee\'s address is updated on some records
+but not others \-- then the relation is left in an inconsistent state.
+Specifically, the relation provides conflicting answers to the question of what
+this particular employee\'s address is.
+
+  -------------------------------------------------------
+  Employee ID   Employee Address        Skill
+  ------------- ----------------------- -----------------
+  426           230 Parkland Crescent   typing
+
+  426           230 Parkland Crescent   shorthand
+
+  529           158 Watkins Place       public speaking
+
+  529           108 Church Street       carpentry
+  -------------------------------------------------------
+
+### Deletion anomalies
+
+Under certain circumstances, the deletion of data representing certain facts
+necessitates the deletion of data representing completely different facts.
+The \"Faculty and Their Courses\" relation described in the previous example
+suffers from this type of anomaly, for if a faculty member temporary ceases to
+be assigned to any courses, the last of the records on which that faculty
+member appears must be deleted, effectively also deleting the faculty member,
+unless the *Course Code* field is set to `null`.
+
+## First normal form (1NF)
+
+**Data example**
+
+The table below represents players and their characters inventory, ordered by
+their characters\' levels.
+
+  -----------------------------------------------------------------------------
+  username     inventory
+  ------------ ----------------------------------------------------------------
+  prombery87   2 amulets, 3 rings
+
+  wheed1997    18 copper coins, 1 bow, 5 arrows
+
+  acen1999     1 sword, 1 shield, 4 rings
+  -----------------------------------------------------------------------------
+
+### Requirements
+
+-   Row order should not be used to convey information.
+-   Data types should not be mixed within the same column
+    (and the RDBMS won\'t let you do in anyway).
+-   Tables should have their primary keys.
+-   Repeating groups should be eliminated.
+
+### Applying 1NF
+
+First of all, using the rows order to represent the information violates 1NF.
+This can be easily fixed by adding additional column *level* to store the info
+about the character\'s level. From this, the ordered sequences can be fetched
+by using the query:
+
+``` sql
+SELECT username FROM player ORDER BY level;
+```
+
+The second rule is **do not** mix data types within the same column.
+As example, the characters\' level might be described as follows:
+
+  -----------------------------------------------------------------------------
+  username     inventory                          level
+  ------------ ---------------------------------- -----------------------------
+  prombery87   2 amulets, 3 rings                 9
+
+  wheed1997    18 copper coins, 1 bow, 5 arrows   almost 8
+
+  acen1999     1 sword, 1 shield, 4 rings         5.5
+  -----------------------------------------------------------------------------
+
+The data types are mixed in *level* column, which violates 1NF; and normally,
+RDBMS won\'t let you do this.
+
+The tables without a **primary key** violates 1NF as well. *username* field
+may be used as **PK** for the players relation example. This would prevent
+the data duplication, like having both `wheed1997` players at level 7 and 8
+at the same time, which makes no sense.
+
+  -----------------------------------------------------------------------------
+  username     inventory                          level
+  ------------ ---------------------------------- -----------------------------
+  prombery87   2 amulets, 3 rings                 9
+
+  wheed1997    18 copper coins, 1 bow, 5 arrows   8
+
+  wheed1997    18 copper coins, 1 bow, 5 arrows   7
+
+  acen1999     1 sword, 1 shield, 4 rings         5
+  -----------------------------------------------------------------------------
+
+At last, *inventory* column contains repeating groups of data (also called
+*non-atomic data*), which violates 1NF. To normalize the table, it should be
+altered in a way, to represent only one inventory item per row.
+
+  ------------------------------------------
+  player_id    item_type     item_quantity
+  ------------ ------------- ---------------
+  prombery87   amulet        2
+
+  prombery87   ring          3
+
+  wheed1997    copper coin   18
+
+  wheed1997    bow           1
+
+  wheed1997    arrow         5
+
+  acen1999     sword         1
+
+  acen1999     shield        1
+
+  acen1999     ring          4
+  ------------------------------------------
+
+The primary key for this table is the combination of *player_id* and
+*item_type* \-- a composite primary key.
+
+## Second normal form (2NF)
+
+Here, 2NF starts. For example, let\'s bring back *level* info to the table,
+representing players and theirs inventory.
+
+  ---------------------------------------------------------
+  player_id    item_type     item_quantity   player_level
+  ------------ ------------- --------------- --------------
+  prombery87   amulet        2               9
+
+  prombery87   ring          3               9
+
+  wheed1997    copper coin   18              6
+
+  wheed1997    bow           1               6
+
+  wheed1997    arrow         5               6
+
+  acen1999     sword         1               3
+
+  acen1999     shield        1               3
+
+  acen1999     ring          4               3
+  ---------------------------------------------------------
+
+The player\'s *level* should be duplicated for each row. This table design
+keeps the doors open for **insertion**, **update** and **deletion** anomalies.
+
+### Requirements
+
+-   Each non-key attribute must depend on the entire primary key
+
+### Applying 2NF
+
+The 2NF is all about \"how non-key columns related to the primary key\".
+The example above has *non-key attributes* (which is another term for
+the \"non-key columns\") are: *item_quantity* and *player_level*.
+
+The relations between the *primary key* and *non-key attributes* can be
+described as:
+
+    { player_id, item_type } -> { item_quantity }
+    { player_id } -> { player_level }
+
+The *item_quantity* column depends on the *player_id* and *item_type* columns,
+which creates a 1-to-1 dependency for this column on the entire primary key.
+This means, there is no way to place different values in the *item_quantity*
+column for the same primary key.
+
+But, the *player_level* column depends on the *player_id* only. It\'s a problem,
+because the *player_id* is not the primary key, but a part of a primary key.
+This violates the 2NF, and what\'s why the table is vulnerable to the problems.
+
+The **player** is the important concept for representing the data.
+So, it\'s the best solution to store player related data in a separate table.
+
+  ---------------------------
+  player_id    player_level
+  ------------ --------------
+  prombery87   9
+
+  wheed1997    6
+
+  acen1999     3
+  ---------------------------
+
+  : player
+
+  ------------------------------------------
+  player_id    item_type     item_quantity
+  ------------ ------------- ---------------
+  prombery87   amulet        2
+
+  prombery87   ring          3
+
+  wheed1997    copper coin   18
+
+  wheed1997    bow           1
+
+  wheed1997    arrow         5
+
+  acen1999     sword         1
+
+  acen1999     shield        1
+
+  acen1999     ring          4
+  ------------------------------------------
+
+  : player_inventory
+
+## Third normal form (3NF)
+
+Let\'s assume, the player table is extended with the *player_rating* column,
+which describes the players\' skills as \"beginner\", \"intermediate\", or
+\"advanced\". And let\'s assume, the skills are arranged in some like:
+
+  -------------- ---------- --- --- -------------- ---- ---- ---------- --- ---
+  Skill Level    Beginner           Intermediate             Advanced       
+
+  Player Level   1          2   3   4              5    6    7          8   9
+  -------------- ---------- --- --- -------------- ---- ---- ---------- --- ---
+
+  -------------------------------------------
+  player_id    player_level   player_rating
+  ------------ -------------- ---------------
+  prombery87   9              advanced
+
+  wheed1997    6              intermediate
+
+  acen1999     3              beginner
+  -------------------------------------------
+
+  : player
+
+The *non-key attributes* dependencies can be described as follows:
+
+    { player_id } -> { player_level }
+    { player_id } -> { player_level } -> { player_skill }
+
+The *player_rating* does not depend on the primary key, but it depends on
+the *player_level* attribute, which is dependent on the primary key. These
+type of dependencies is called **transitive dependency**. Having these in
+a table opens a way for having data in an inconsistent form. E.g. let\'s assume
+player \"acen1999\" have increase their level to 4, but something went wrong,
+and *player_rating* has not been updated.
+
+  ------------ -------------- ---------------
+  acen1999     4              beginner
+
+  ------------ -------------- ---------------
+
+### Requirements
+
+-   Every non-key attribute in a table should depend on the key, the whole key,
+    and nothing but the key (no transitive dependency).
+
+!!! note
+
+
+    **Boyce-Codd normal form**
+
+    BCNF (Boyce-Codd Normal Form) is the stronger version of 3NF.
+    It also is called as 3.5NF (three-and-a-half normal form).
+
+    **Every attribute** in a table should depend on the key, the whole key,
+    and nothing but the key.
+
+
+### Applying 3NF
+
+Introducing the \"player_rating_levels\" will fix the problem.
+
+  ---------------------------
+  player_id    player_level
+  ------------ --------------
+  prombery87   9
+
+  wheed1997    6
+
+  acen1999     3
+  ---------------------------
+
+  : player
+
+  ------------------------------
+  player_level   player_rating
+  -------------- ---------------
+  9              advanced
+
+  8              advanced
+
+  7              advanced
+
+  6              intermediate
+
+  5              intermediate
+
+  4              intermediate
+
+  3              beginner
+
+  2              beginner
+
+  1              beginner
+  ------------------------------
+
+  : player_rating_levels
+
+## Conclusion
+
+Each next normal form includes all the requirements for the previous one.
+
+Following the rules above will lead you to having a fully normalized tables
+in 99% of time.

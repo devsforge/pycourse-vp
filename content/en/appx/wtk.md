@@ -1,0 +1,1 @@
+::: {.meta description="Knights, thieves and wizards game project" author="Serhii Horodilov sgorodil@gmail.com" keywords="python, game, oop, object-oriented programming"}

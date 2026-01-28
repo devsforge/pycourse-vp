@@ -1,0 +1,129 @@
+# Data Manipulation Language
+
+DML (Data Manipulation Language) is a subset of SQL used for adding,
+updating, and deleting data within database tables.
+
+-   `SELECT` used to query data from the database
+-   `INSERT` used to insert new data into a table
+-   `UPDATE` used to modify existing data
+-   `DELETE` used to remove data from a table
+
+::: {.contents local="" depth="2"}
+
+## Creating new records
+
+When a table is created, it contains no data. Inserting data will populate
+a table with values. Data is inserted one row at a time. You can also insert
+multiple rows with a single command. But it impossible to insert something
+that is not a complete row.
+
+To create a new row use `INSERT` command.
+
+The data values are listed in the order in which the columns appear in
+the table, separated by commas. This syntax has the drawback that you need to
+know the order of the columns in the table. To avoid this you can also list
+the columns explicitly. If you don\'t have values for all the columns, you can
+omit some of them. In that case, the columns will be filled with their default
+values.
+
+::: {.literalinclude caption="Create publisher table" language="postgresql" start-after="-- label: ddl-publisher" end-before="-- label:"}
+/../libms-db/libms.sql
+
+::: {.literalinclude caption="Insert data to publisher table" language="postgresql" start-after="-- label: dml-publisher" end-before="-- label:"}
+/../libms-db/libms.sql
+
+You can insert multiple rows in a single command.
+
+::: {.literalinclude caption="Create author table" language="postgresql" start-after="-- label: ddl-author" end-before="-- label:"}
+/../libms-db/libms.sql
+
+::: {.literalinclude caption="Inserting multiple values at a time" language="postgresql" lines="250-251,278-286,428-429"}
+/../libms-db/libms.sql
+
+!!! note
+
+
+    There is a reference to the \"publisher\" table present below. Think of it
+    like placing the publisher information directly into \"book\" table for now.
+
+
+::: {.literalinclude caption="Create book table" language="postgresql" start-after="-- label: ddl-book" end-before="-- label:"}
+/../libms-db/libms.sql
+
+::: {.literalinclude caption="Inserting records from file" language="postgresql" start-after="-- label: dml-book" end-before="-- label:"}
+/../libms-db/libms.sql
+
+## Modifying records
+
+The modification of data that is already in the database is referred as
+updating. To update the existing rows, use the `UPDATE` command.
+This requires three pieces of information:
+
+1.  The name of the table and column(s) to update
+2.  The new value of the column(s)
+3.  Which row(s) to update
+
+``` postgresql
+UPDATE book SET language = 'uk' WHERE publisher = 3;
+```
+
+This might cause zero, one, or many rows to be updated. The update syntax
+is pretty straightforward. First the key word `UPDATE` followed by the table
+name. Next is the key word `SET` followed by the column name, an equal sign,
+and the new column value. The new column value can be any scalar expression,
+not just a constant. More than one column can be updated at a time by listing
+more than one assignment in the `SET` clause.
+
+!!! important
+
+
+    `WHERE` clause is optional, but it limits the rows affected by
+    `UPDATE` command. If there is no limitations all the records
+    within a table will be updated with new values.
+
+    ``` postgresql
+    UPDATE book SET language = 'uk';
+    ```
+
+
+## Removing data
+
+So far we have explained how to add data to tables and how to change data.
+What remains to discuss how to remove data that is no longer needed. Just
+as adding data is only possible in whole rows, you can only remove entire
+rows from a table.
+
+You use `DELETE` command to remove rows; the syntax is very similar to
+the `UPDATE` command.
+
+``` postgresql
+DELETE FROM book WHERE publisher = 3;
+```
+
+If you simply write:
+
+``` postgresql
+DELETE FROM book;
+```
+
+then all rows in the table will be deleted!
+
+## Returning data from modified rows
+
+Sometimes it is useful to obtain data from modified rows while they are being
+manipulated. The `INSERT`, `UPDATE` and `DELETE` commands all have an
+optional `RETURNING` clause that supports this. Use of `RETURNING` avoids
+performing an extra database query to collect the data, and is especially
+valuable when it would otherwise be difficult to identify the modified rows
+reliably.
+
+``` postgresql
+INSERT INTO author (first_name, last_name, country, birthdate)
+VALUES ('Wendye', 'Rowbotham', 'Poland', '1932-12-16'),
+       ('Grannie', 'Kidner', 'United States', '1940-02-21'),
+       ('Godart', 'Van Driel', 'United Kingdom', '1980-01-02'),
+       ('Meara', 'Meenehan', 'United States', '1994-12-13')
+RETURNING id;
+```
+
+For example the query above provides the identifiers to new rows.

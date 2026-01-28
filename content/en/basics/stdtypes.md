@@ -1,0 +1,279 @@
+# Built-in Types
+
+The principal built-in types are numerics, sequences, mappings, classes,
+instances and exceptions docs-python:stdtypes. This section covers
+only the most base of them. Others will be discussed in the future within
+their own topics.
+
+## Numeric types
+
+There are 3 distinct numeric types: *integers*, *floating point numbers*, and
+*complex numbers*. In addition, Booleans are a subtype of integers. Integers
+have unlimited precision. Floating point numbers are usually implemented using
+`double` in C. Complex numbers have a real and imaginary part, which are each
+a floating point number.
+
+Numbers are created by numeric literals or as the result of built-in functions
+and operators. Unadorned integer literals (including hex, octal and binary
+numbers) yield integers. Numeric literals containing a decimal point or an
+exponent sign yield floating point numbers. Appending `j` or `J` to a
+numeric literal yields an imaginary number (a complex number with a zero real
+part) which you can add to an integer or float to get a complex number with
+real and imaginary parts.
+
+### Supported operations
+
+  -----------------------------------------------------------------------------
+  Operation             Result
+  --------------------- -------------------------------------------------------
+  `x + y`               sum of *x* and *y*
+
+  `x - y`               difference of *x* and *y*
+
+  `x * y`               product of *x* and *y*
+
+  `x / y`               quotient of *x* and *y*
+
+  `x // y`              floored quotient of *x* and *y*
+
+  `x % y`               remainder of `x / y`
+
+  `-x`                  *x* negated
+
+  `+x`                  *x* unchanged
+
+  `abs(x)`              absolute value or magnitude of *x*
+
+  `int(x)`              *x* converted to integer
+
+  `float(x)`            *x* converted to floating point
+
+  `complex(re, im)`     a complex number with real part *re*, imaginary part
+                        *im*. *im* defaults to zero.
+
+  `divmod(x, y)`        the pair `(x // y, x % y)`
+
+  `pow(x, y)`           *x* to the power *y*
+  `x ** y`              
+  -----------------------------------------------------------------------------
+
+!!! note
+
+
+    `x // y` also referred to as integer division. The resultant value
+    is a whole integer, through the result\'s type is not necessarily int.
+    The result is always rounded towards minus infinity:
+    `1 // 2` is `0`
+
+
+!!! note
+
+
+    `float(x)` also accepts the strings `"nan"` and `"inf"` with
+    an optional prefix \"+\" or \"-\" for NaN(Not a Number) and
+    positive and negative infinity.
+
+
+### Code examples
+
+``` {.python caption="Integer numbers" linenos=""}
+>>> x = 42
+>>> y = 24
+>>> a = int(42)
+>>> b = int(42.24)
+>>> # result is of the integer type
+>>> result_add = x + y   # for both int operands only
+>>> result_sub = x - y   # for both int operands only
+>>> result_mul = x * y   # for both int operands only
+>>> result_div = x // y  # for any numeric operands
+```
+
+``` {.python caption="Floating point numbers" linenos=""}
+>>> x = 42.
+>>> y = .24
+>>> z = 42.24
+>>> a = float(42)
+>>> b = float(42.24)
+>>> # result is of the float type
+>>> result_add = x + y  # for any float operand
+>>> result_sub = x - y  # for any float operand
+>>> result_mul = x * y  # for any float operand
+>>> result_div = x / y  # for any numeric operands
+```
+
+### Value comparisons
+
+Numbers of built-in numeric types can be compared within and across their types
+(with the restriction that complex numbers do not support order comparison).
+Within the limits of the types involved, they compare mathematically correct
+without loss of precision.
+
+The \"not-a-number\" values `float("NaN")` and `decimal.Decimal('NaN')` are
+special. Any ordered comparison of a number to a not-a-number value is false.
+
+## Sequence types
+
+There are 3 basic sequence types: *lists*, *tuples*, and *range objects*.
+Additional sequence types tailored for processing of binary data and text
+strings are described in dedicated sections.
+
+### Lists
+
+Lists are mutable sequences, typically used to store collections of items.
+They may be constructed in several ways:
+
+-   using a pair of square brackets to denote the empty list: `[]`
+-   using square brackets, separating items with commas: `[a]`, `[a, b, c]`
+-   using a list comprehension: `[x for x in iterable]`
+-   using the type constructor: `list()` or `list(iterable)`
+
+### Tuples
+
+Tuples are immutable sequences, typically used to store collections of data or
+for cases where an immutable sequence of data is needed (such as allowing
+storage in a `set` or `dict` instances).
+They may be constructed in a number of ways:
+
+-   using a pair of parentheses to denote the empty tuple: `()`
+-   using a trailing comma for a singleton tuple: `a,` or `(a, b, c)`
+-   separating items with commas: `a, b, c` or `(a, b, c)`
+-   using the type constructor: `tuple()` or `tuple(iterable)`
+
+### Common operations
+
+  -----------------------------------------------------------------------------
+  Operation              Result
+  ---------------------- ------------------------------------------------------
+  `x in s`               `True` if an item of *s* equal to *x*
+  `x not in s`           `False` if an item of *s* equal to *x*
+
+  `s + t`                the concatenation of *s* and *t*
+
+  `s * n`                equivalent to adding *s* to itself *n* times
+
+  `s[i]`                 *i*-th item of *s*, origin 0
+
+  `s[i:j]`               slice of *s* from *i* to *j* with step *k*. any of
+  `s[i:j:k]`             these (or even all 3) may be omitted.
+
+  `len(s)`               length of *s*
+
+  `min(s)`               smallest item of *s*
+
+  `max(s)`               largest item of *s*
+
+  `s.count(x)`           total number of occurrences of *x* in *s*
+
+  `s.index(x)`           index of the first occurrence of *x* in *s*
+  `s.index(x, i)`        at or after index *i* and before index *j*
+  `s.index(x, i, j)`     
+  -----------------------------------------------------------------------------
+
+### Value comparisons
+
+Sequences can be compared only within each of their types, with the restriction
+that ranges do not support order comparison. Equality comparison across these
+types results in inequality, and ordering comparison across these types raises
+`TypeError`.
+
+Sequences compare lexicographically using comparison of corresponding elements.
+The built-in containers typically assume identical objects are equal to
+themselves. Lexicographical comparison between built-in collections works as
+follows:
+
+-   For two collections to compare equal, they must be of the same type, have
+    the same length, and each pair of corresponding elements must compare equal.
+-   Collections that supports order comparison are ordered the same as their
+    first unequal elements. If corresponding element does not exist, the shorter
+    collection is ordered first.
+
+### Mutable sequence types
+
+  -----------------------------------------------------------------------------
+  Operation            Result
+  -------------------- --------------------------------------------------------
+  `s[i] = x`           item *i* of *s* is replaced by *x*
+
+  `s[i:j] = t`         slice of *s* from *i* to *j* replaced by the contents
+                       of *t*
+
+  `del s[i:j]`         same as `s[i:j] = []`
+
+  `s[i:j:k] = t`       the elements of *s* are replaced by those of *t*[^1]
+
+  `del s[i:j:k]`       removes the elements of `s[i:j:k]` from the list
+
+  `s.append(x)`        appends *x* to the end of the sequence; the same as
+                       `s[len(s):len(s)] = [x]`
+
+  `s.clear()`          removes all items from *s* (`del s[:]`)[^2]
+
+  `s.copy()`           creates a shallow copy of *s* (`s[:]`)[^3]
+
+  `s.extend(t)`        extends *s* with the contents of *t*
+  `s += t`             
+
+  `s.insert(i, x)`     inserts *x* into *s* at the index *i*; same as
+                       `s[i:i] = [x]`
+
+  `s.pop()`,           retrieves the item at *i* and also removes it from *s*
+  `s.pop(i)`           (if *i* is omitted - use the last one available index)
+
+  `s.remove(x)`        remove the first item that is equal to *x* from *s*
+
+  `s.reverse()`        reverses the items of *s* in place
+  -----------------------------------------------------------------------------
+
+## Text sequence type
+
+### String methods
+
+Strings implement all of the common sequence operations, along with the
+additional methods.
+
+### Value comparisons
+
+Strings compare lexicographically using the numerical Unicode code points of
+their characters.
+
+## Set types
+
+### Value comparisons
+
+Sets (instances of `set` or `frozenset`) can be compared within and across
+their types. They define order comparison operators to mean subset and superset
+tests. Those relations do not define total ordering (e.g. two sets `{1, 2}`
+and `{2, 3}` are not equal, nor subsets of one another, nor supersets of one
+another).
+
+## Mapping type
+
+A mapping object maps hashable values to arbitrary objects. Mappings are
+mutable objects. There is currently ony one standard mapping type, the
+*dictionary*. In few words mappings are collections of keys and their values.
+
+A dictionary\'s keys are almost arbitrary values. Values that are not hashable
+may not be used as keys. Values that compare equal (such as `1`, `1.0` and
+`True`) can be used interchangeably to index the same dictionary entry.
+
+Dictionaries can be created by several means:
+
+-   Use braces to denote the empty dictionary: `{}`
+-   Use a comma-separated list of `key: value` pairs with braces:
+    `{'first_name': 'Serhii', 'last_name': 'Horodilov', 'age': 34}`
+-   Use a dict comprehension: `{x: x ** 2 for x in range(10)}`
+-   Use the type constructor: `dict()`, `dict([('key', 100)])`,
+    `dict(key=100)`
+
+### Value comparisons
+
+Instances of `dict` compare equal if and only if they have equal key-value
+pairs.
+
+Order comparisons raise `TypeError`.
+
+[^1]: *t* must have the same length as the slice it is replacing
+
+[^2]: new in Python version 3.3
+
+[^3]: new in Python version 3.3

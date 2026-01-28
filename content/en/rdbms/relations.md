@@ -1,0 +1,196 @@
+::: {.meta description="This document describes the database relationships" author="Serhii Horodilov" keywords="sql, db, database, relationship, primary key, foreign key,
+pk, fk, one-to-one, one-to-many, many-to-many, 1-1, 1-n, n-m"}
+
+# Data Relationships
+
+Before dive into relationships, there is a need explain core concepts on how
+data are referenced between different tables.
+
+## Primary key
+
+A primary key constraint indicates that a column, or group of columns, can be
+used as a unique identifier for rows in the table. This requires that values
+be both unique and not null. So, the following two table definitions accept
+the same data:
+
+``` postgresql
+CREATE TABLE publisher
+(
+    id      INTEGER PRIMARY KEY,
+    ...
+);
+
+CREATE TABLE publisher
+(
+    id      INTEGER NOT NULL UNIQUE,
+    ...
+);
+```
+
+Primary keys can span more than one column; the syntax is similar to unique
+constraint:
+
+``` postgresql
+CREATE TABLE example
+(
+    a INTEGER,
+    b INTEGER,
+    c INTEGER,
+    PRIMARY KEY (a, c)
+);
+```
+
+Adding a primary key will automatically create a unique B-tree index on
+the column or group of columns listed in the primary key, and will force
+the column(s) to be marked `NOT NULL`.
+
+A table can have at most one primary key.
+
+!!! note
+
+
+    There can be any number of unique and not-null constraints, which are
+    functionally almost the same thing, but only one can be identified as
+    the primary key.
+
+
+## Foreign key (FK)
+
+A foreign key constraint specifies that the value in a column (or a group of
+columns) must match the values appearing in some row of another table. We say
+this maintains the *referential integrity* between two tables.
+
+A table can have more than one foreign key constraint. Foreign key can also
+overlaps with the primary key.
+
+To define a FK constraint:
+
+``` postgresql
+CREATE TABLE book
+(
+    id           SERIAL PRIMARY KEY,
+    publisher_id INTEGER REFERENCES publisher
+);
+
+CREATE TABLE book
+(
+    id           SERIAL PRIMARY KEY,
+    publisher_id INTEGER REFERENCES publisher (id)
+);
+
+CREATE TABLE book
+(
+    id           SERIAL PRIMARY KEY,
+    publisher_id INTEGER,
+    FOREIGN KEY (publisher_id) REFERENCES publisher
+);
+```
+
+In this situation the `book` table is the *referencing* table, and
+the `publisher` table is the *referenced* table. Similarly there are
+referencing and referenced columns.
+
+In case the referenced column is not explicitly defined, the primary key
+of the referenced table will be used as the referenced column.
+
+It is not possible to create a row with non-null foreign key, that does not
+appear in the referenced table.
+
+### Self-referential foreign key
+
+Sometimes it is useful to the referenced table to be the same table as
+referencing. This makes possible to create a tree-structures with nodes,
+there a top-level node would have `NULL` `parent_id`.
+
+``` postgresql
+CREATE TABLE tree
+(
+    id        SERIAL PRIMARY KEY,
+    parent_id INTEGER REFERENCES tree
+);
+```
+
+### Deleting referenced rows
+
+So far we know that the foreign keys disallows creation of rows that do not
+relate to any row inside the referenced table. But what if a referenced row
+needs to be removed? Intuitively, there are few options:
+
+-   disallow deletion
+-   delete referencing rows as well
+-   something else\...
+
+Restricting and cascading deletes are the two most common options.
+`RESTRICT` prevents deletion of a referenced row. `CASCADE` will also
+delete all referencing rows as well as the referenced one.
+
+``` postgresql
+CREATE TABLE book
+(
+    id           SERIAL PRIMARY KEY,
+    publisher_id INTEGER REFERENCES publisher ON DELETE RESTRICT
+);
+
+CREATE TABLE book
+(
+    id           SERIAL PRIMARY KEY,
+    publisher_id INTEGER REFERENCES publisher ON DELETE CASCADE
+);
+```
+
+There are others options.
+
+`NO ACTION` means that if any referencing rows still exist when
+the constraint is checked, an error is raised; this is the default behavior.
+
+`SET NULL` will replace all referencing rows foreign key values with `NULL`
+values.
+
+`SET DEFAULT` will replace all referencing rows foreign key values with
+default values.
+
+### Relationships
+
+From the point of view of the RDBMS there are no other relationships between
+two tables except the **foreign key**.
+But the way the foreign keys are designed brings us three concepts of the data
+relations.
+
+**One-to-many**
+
+In a relational database, two tables have a one-to-many relationship if each
+row in one table references multiple rows of the other table. For example
+`publisher` can publish many books, but a single `book` is published by
+some specific publisher.
+
+::: {.literalinclude language="postgresql" start-after="-- label: ddl-book" end-before="-- label:"}
+/../libms-db/libms.sql
+
+**One-to-one**
+
+!!! note
+
+
+    You can think of one-to-one relationship as a limited version of
+    *one-to-many*.
+
+
+In a relational database, two tables have a one-to-one relationship if each row
+in one table links to exactly one row in the other table, and vice versa.
+For example a table of `members` and a table of `contacts` might have
+a one-to-one relationship.
+
+::: {.literalinclude language="postgresql" start-after="-- label: ddl-member" end-before="-- label:"}
+/../libms-db/libms.sql
+
+**Many-to-many**
+
+In relational database, two table have many-to-many relationship if each row
+in one table can reference multiple rows in another table, and vice versa.
+For example table `book` may contain records for books authored by many
+`authors`. On the other hand author can write multiple books. Implementing
+a many-to-many relationship requires creation of an intermediate table, that
+applies one-to-many relationship with both original tables.
+
+::: {.literalinclude language="postgresql" start-after="-- label: ddl-book_author" end-before="-- label:"}
+/../libms-db/libms.sql

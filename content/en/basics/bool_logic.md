@@ -1,0 +1,243 @@
+::: {.meta description="this document covers usage of logic and comparison
+operators in Python
+:author: Serhii Horodilov
+:keywords: python, boolean, logic, comparison, operator"}
+
+# Boolean Logic
+
+![image](/../assets/img/george_boole.jpg){.align-center height="248px"}
+
+[George Boole](https://en.wikipedia.org/wiki/George_Boole) put together what is now known as [Boolean algebra](https://en.wikipedia.org/wiki/Boolean_algebra), which
+relies on **true** and **false** values and define a set of boolean operations:
+**not**, **and**, and **or**.
+
+These Boolean values and operators are helpful in programming because they help
+you decide the course of action in your programs.
+
+The **Python boolean** type is one of Python\'s built-in data types. It\'s used
+to represent the truth value of an expression. For example, the expression
+`1 < 2` is `True`, while the expression `0 == 1` is `False`.
+Understanding how Python Boolean values behave is important to programming well
+in Python.
+
+## Understanding Boolean
+
+The Boolean type has only two possible values:
+
+-   `True`
+-   `False`
+
+No other value will have `bool` as it type.
+
+``` 
+>>> type(True)
+<class 'bool'>
+>>> type(False)
+<class 'bool'>
+```
+
+The type `bool` is **built-in**, meaning it\'s always available in Python.
+`True` and `False` are keywords in Python and can\'t be used as
+variable names. but `bool` type isn\'t and it\'s possible assign to the name
+`bool`, however this is considered bad style.
+
+### Boolean as numbers
+
+Booleans are a subtype of **numeric** type in Python. This means they\'re
+numbers for all intents and purposes. In other words, you can apply arithmetic
+operations to Boolean, and you can also compare them to numbers. `True`
+value is treated to be 1, and `False` value is treated to be 0.
+
+There aren\'t many uses of the numerical nature of Boolean values.
+
+## Truth value testing
+
+Any object can be tested for truth value. By default an object considered
+`True`, unless its class defines either. Here are most of built-in objects
+considered `False`:
+
+-   constant values: `None` and `False`
+-   zero of any numeric type: `0`, `0.0`, `0j`, `Decimal(0)`,
+    `Fraction(0, 1)`
+-   empty sequences and collections: `''`, `[]`, `()`, `{}`, `set()`,
+    `range(0)`.
+
+::: hint
+::: title
+Hint
+
+If `len(something)` is equal to 0, than `something` is cast to `bool`
+as `False`.
+
+## Boolean comparison
+
+Python provides 3 logical operators:
+
+  ---------------------------
+  Operator   Logic operator
+  ---------- ----------------
+  `not`      Negation
+
+  `and`      Conjunction
+
+  `or`       Disjunction
+  ---------------------------
+
+With these operators, you can build expressions by connecting Boolean
+expressions with each other. These operators are **keywords** of the language,
+so you cannot use them as identifiers without causing a *SyntaxError*.
+
+### Getting started with `not` operator
+
+The `not` operator is the Boolean or logic operator that implements negation
+in Python. It\'s **unary**, which means that it takes only one **operand**.
+The operand can be a Boolean expression or any Python object. The task of
+`not` is to reverse the truth value of its operand.
+
+  -------------------------------
+  `operand`     `not operand`
+  ------------- -----------------
+  `True`        `False`
+
+  `False`       `True`
+  -------------------------------
+
+  : not operator truth table
+
+This functionality makes it worthwhile in several situations:
+
+-   Checking **unmet conditions** in the context of `if` statements and
+    `while` loops
+-   **Inverting the truth value** of an object or expression
+-   Checking if a **value is not in a given container**
+-   Checking for an **object\'s identity**
+
+### Getting started with `and` operator
+
+Python\'s `and` operator is **binary**, which means it takes two **operands**.
+The operands in an `and` expression are commonly known as *conditions*.
+The result of the operator depends on the truth values of its operands. It\'ll
+be `True` if **both** are true.
+
+  -------------------------------------------------------------
+  `operand_1`     `operand_2`     `operand_1 and operand_2`
+  --------------- --------------- -----------------------------
+  `True`          `True`          `True`
+
+  `False`         `False`         `False`
+
+  `True`          `False`         `False`
+
+  `False`         `True`          `False`
+  -------------------------------------------------------------
+
+  : and operator truth table
+
+`and` operator works not only with operands of Boolean type.
+It\'s behavior:
+
+-   evaluate 1st operand; return it, if it\'s `False` and finish
+-   evaluate 2nd operand; return it, if it\'s `False` and finish
+-   return 2nd operand
+
+``` python
+>>> 1 and 5
+5
+>>> '' and None
+''
+>>> 0 and True
+0
+>>> 5 and False
+False
+```
+
+### Getting started with `or` operator
+
+With Boolean `or` operator, you can connect two Boolean expressions into one
+compound expression. This makes `or` the **binary** operator. At least one
+subexpression must be `True` for the compound expression to be considered
+`True`, and it doesn\'t matter which. If both subexpressions are `False`,
+then the expression is `False`.
+
+  ------------------------------------------------------------
+  `operand_1`     `operand_2`     `operand_1 or operand_2`
+  --------------- --------------- ----------------------------
+  `True`          `True`          `True`
+
+  `False`         `False`         `False`
+
+  `True`          `False`         `True`
+
+  `False`         `True`          `True`
+  ------------------------------------------------------------
+
+  : or operator truth table
+
+`or` operator works not only with operands of Boolean type.
+It\'s behavior:
+
+-   evaluate 1st operand; return it, if it\'s `True` and finish
+-   evaluate 2nd operand; return it, if it\'s `True` and finish
+-   return 2nd operand
+
+``` python
+>>> 42 or True
+42
+>>> None or []
+[]
+>>> 0 or True
+True
+>>> [[]] or ''
+[[]]
+```
+
+## Comparison
+
+There are eight comparison operations in Python. They all have the same
+priority (which is higher than that of the Boolean operations).
+
+  ------------------------------------------------
+  Operator     Meaning
+  ------------ -----------------------------------
+  `<`          strictly less than
+
+  `<=`         less than or equal
+
+  `>`          strictly greater than
+
+  `>=`         greater or equal
+
+  `==`         equal (aka *equality* comparison)
+
+  `!=`         not equal
+
+  `is`         object identity
+
+  `is not`     negated object identity
+  ------------------------------------------------
+
+  : Comparison operators
+
+Each of these comparison operators return a Boolean value, it\'s always
+`True` or `False`.
+
+You can chain comparison operators together: `x < y < z` is equal to
+`x < y and y < z`.
+
+### Equality vs Identity
+
+It\'s easier to understand the difference between those by asking the question
+each answers to.
+
+The question for `==` (*equality*) is:
+
+> Is object on the left **equal** to the object on the right
+
+The question for `is` (*identity*) is:
+
+> Is object on the left **the same** as the object on the right
+
+For example, if there are two cars of the same model, same color etc. in front
+of you - these cars are equal, but they aren\'t ident to each other. But if you
+are shown two pictures of the same car, you understand that the cars on those
+pictures are the same object.

@@ -1,0 +1,11 @@
+# Object-Oriented Programming
+
+Object-oriented programming (OOP) is one of the biggest and most important
+subjects in all of programming. It is a method of structuring a program by
+bundling related properties and behavior into individual objects.
+
+::: {#oop .toctree}
+intro
+inheritance
+patterns
+solid

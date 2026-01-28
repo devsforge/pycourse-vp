@@ -1,0 +1,691 @@
+# Git Basics
+
+## Getting a Git repository
+
+You typically obtain a Git repository in one of two ways:
+
+1.  You can take a local directory that is currently not under version control,
+    and turn it into a Git repository.
+2.  You can clone an existing Git repository from elsewhere.
+
+In either case, you end up with a Git repository on your local machine,
+ready for work.
+
+### Initializing repo in an existing directory
+
+If you have a project directory that is currently not under version control and
+you want to start controlling it with Git, you first need to go to that
+project\'s directory. If you\'ve never done this, it looks a little different
+depending on which system you\'re running:
+
+<!-- Change directory in bash (Linux) -->
+```shell
+cd /home/user/project
+```
+
+<!-- Change directory in bash (MacOS) -->
+```shell
+cd /Users/user/project
+```
+
+<!-- Change directory in PowerShell (Windows) -->
+```powershell
+cd C:\Users\user\project
+```
+
+In the project\'s directory initialize a new Git repository.
+
+    git init
+
+This creates a new subdirectory named .git that contains all of your necessary
+repository files \-- a Git repository skeleton.
+
+### Cloning an existing repo
+
+If you want to get a copy of an existing Git repository \-- for example,
+a project you\'d like to contribute to \-- the command you need is `git clone`.
+
+``` shell
+git clone https://github.com/edu-python-course/edu-python-course.github.io
+```
+
+That creates a directory named *edu-python-course.github.io*, initializes a
+*.git* directory inside it, pulls down all the data for that repository,
+and checks out a working copy of the latest version.
+
+``` shell
+git clone https://github.com/edu-python-course/edu-python-course.github.io python-course
+```
+
+That command does the same thing as the previous one, but the target directory
+is called *python-course*.
+
+Git has a number of different transfer protocols you can use. The previous
+example uses the `https://` protocol, but you may also see `git://` or
+`user@server:path/to/repo.git`, which uses the SSH transfer protocol.
+
+## Making changes to the repo
+
+At this point, you should have a *bona fide* Git repository on your local
+machine, and a checkout or *working copy* of all of its files in front of you.
+Typically, you\'ll want to start making changes and committing snapshots of
+those changes into your repository each time the project reaches a state you
+want to record.
+
+Remember that each file in your working directory can be in one of two states:
+**tracked** or **untracked**.
+
+-   Tracked files are files that were in the last snapshot, as well as any
+    newly staged files; they can be unmodified, modified, or staged. In short,
+    tracked files are files that Git knows about.
+-   Untracked files are everything else \-- any files in your working directory
+    that were not in your last snapshot and are not in your staging area.
+    Untracked basically means that Git sees a file you didn\'t have in
+    a previous snapshot (commit), and which hasn\'t been yet staged.
+
+::: only
+html
+
+::: {.mermaid align="center" caption="The lifecycle of the status of repo's files"}
+/../assets/mermaid/git/lifecycle.mmd
+
+::: only
+latex
+
+<figure>
+<img src="/../assets/mermaid/git/lifecycle.mmd.png" class="align-center" alt="/../assets/mermaid/git/lifecycle.mmd.png" />
+<figcaption>The lifecycle of the status of repo's files</figcaption>
+</figure>
+
+### Checking out status of the file(s)
+
+The main tool you use to determine which files are in which state is
+the `git status` command.
+
+    $ # check status
+    $ git status
+    On branch devel
+
+    No commits yet
+
+    nothing to commit (create/copy files and use "git add" to track)
+
+    $ # add file to the repository
+    $ echo "# Project Title" > README.md
+    $ # check status once again
+    $ git status
+    On branch devel
+
+    No commits yet
+
+    Untracked files:
+      (use "git add <file>..." to include in what will be committed)
+            README.md
+
+    nothing added to commit but untracked files present (use "git add" to track)
+
+Newly added *README.md* file is untracked, because it\'s under \"Untracked files\"
+heading the status output.
+
+### Tracking new files
+
+In order to begin tracking a new file, you use the `git add` command.
+
+    $ git add README.md
+    $ git status
+    On branch devel
+
+    No commits yet
+
+    Changes to be committed:
+      (use "git rm --cached <file>..." to unstage)
+            new file:   README.md
+
+From now *README.md* file is **added** to the stage area and ready to be
+committed (is under \"Changes to be committed\" heading).
+
+::: hint
+::: title
+Hint
+
+You can use wildcards, to stage multiple files at once. The most common
+use cases is to add **all** modified files, or files inside of a specific
+directory.
+
+    git add *     # stage all changes
+    git add .     # stage all changes in current directory
+    git add docs  # stage all changes in "docs" directory
+
+### Staging modified files
+
+If a staged (or already committed) file has been changed, it will be moved
+under \"Modified\" heading. These changes wouldn\'t be committed unless they are
+staged.
+
+    $ git status
+    On branch devel
+
+    No commits yet
+
+    Changes to be committed:
+      (use "git rm --cached <file>..." to unstage)
+            new file:   README.md
+
+    Changes not staged for commit:
+      (use "git add <file>..." to update what will be committed)
+      (use "git restore <file>..." to discard changes in working directory)
+            modified:   README.md
+
+-   Changes may be added to the stage area by repeating `git add` command.
+-   Changes may be discard by `git restore <file>` command. This action will
+    restore file to its **staged** version.
+
+### Committing changes
+
+Now that the stage area is set up the way required, it\'s time to commit
+changes. Remember that anything that is still unstaged \-- any files you
+have created or modified that you haven\'t run git add on since you edited
+them \-- won\'t go into this commit.
+
+The simplest way to commit is to type `git commit`:
+
+    git commit
+
+Doing so launches your editor of choice.
+
+!!! note
+
+
+    This is set by your shell\'s EDITOR environment variable \-- usually vim or
+    emacs, although you can configure it with whatever you want using
+    the `git config --global core.editor`
+
+
+Alternatively, you can type your commit message inline with the `commit`
+command by specifying it after a `-m` flag, like this:
+
+    git commit -m "Add GitHub workflow to test Sphinx builds for PRs to devel"
+
+Although it can be amazingly useful for crafting commits exactly how you want
+them, the staging area is sometimes a bit more complex than you need in your
+workflow. If you want to skip the staging area, Git provides a simple shortcut.
+Adding the `-a` option to the `git commit` command makes Git automatically
+stage every file that is already tracked before doing the commit, letting you
+skip the git add part:
+
+    $ git status
+    On branch devel
+
+    No commits yet
+
+    Changes to be committed:
+      (use "git rm --cached <file>..." to unstage)
+            new file:   README.md
+
+    Changes not staged for commit:
+      (use "git add <file>..." to update what will be committed)
+      (use "git restore <file>..." to discard changes in working directory)
+            modified:   README.md
+
+    Untracked files:
+      (use "git add <file>..." to include in what will be committed)
+            example.json
+
+    $ git commit -a -m "Commit tracked files"
+    [devel (root-commit) 7acb7a1] Commit tracked files
+     1 file changed, 3 insertions(+)
+     create mode 100644 README.md
+
+    $ git status
+    On branch devel
+    Untracked files:
+      (use "git add <file>..." to include in what will be committed)
+            example.json
+
+    nothing added to commit but untracked files present (use "git add" to track)
+
+### Ignoring files
+
+Often, there is a class of files, that should not be a part of a repo. You
+want these files to be prevent from being automatically added or even shown
+as being untracked. These are generally files produced by loggers or a build
+system, or some local settings for the project that shouldn\'t be shared across
+other developers or maintainers. In such cases you can create a *.gitignore*
+file. Here is the content of *.gitignore* used in current repository:
+
+    # virtual environment
+    /.venv/
+    /.env/
+    /venv/
+    /env/
+
+    # node packages
+    /node_modules/
+
+    # ide configs
+    /.vscode/
+    /.idea/
+
+    # emacs cache and backup files
+    \#*
+    *~
+
+    # temporary files storage
+    /temp/
+    /tmp/
+
+    # documentation builds
+    _builds/
+    _build/
+    builds/
+    build/
+
+    # translation object files
+    *.pot
+    *.mo
+
+These lines mean:
+
+-   Content within directories named \".venv\", \".env\", \"venv\" or \"env\"
+    will be ignored completely.
+-   Content within \"node_modules\" directory will be ignored completely.
+-   Any files within directories named \".vscode\" or \".idea\" will be ignored
+    completely.
+-   Any file with name starting with hash (#) will be ignored.
+-   Any file with name ending with tilda (\~) will be ignored.
+-   Content within directories named \"temp\" or \"tmp\" will be ignored
+    completely.
+-   Content within directories named \"\_builds\", \"\_build\", \"builds\" or
+    \"build\" will be ignored completely.
+-   Any file with name ending with \".pot\" will be ignored.
+-   Any file with name ending with \".mo\" will be ignored.
+
+Setting up a *.gitignore* file for your new repository before you get going is
+generally a good idea so you don\'t accidentally commit files that you really
+don\'t want in your Git repository.
+
+The rules for the patterns you can put in the *.gitignore* file are as follows:
+
+-   Blank lines or lines starting with \# are ignored.
+-   Standard glob patterns work, and will be applied recursively throughout
+    the entire working tree.
+-   You can start patterns with a forward slash (/) to avoid recursive
+    inclusion.
+-   You can end patterns with a forward slash (/) to specify a directory.
+-   You can negate a pattern by starting it with an exclamation point (!).
+
+Glob patterns are like simplified regular expressions that shells use.
+An asterisk (\*) matches zero or more characters; \[ab\] matches any character
+inside the brackets (in this case a or b); a question mark (?) matches
+a single character; and brackets enclosing characters separated by a hyphen
+(\[0-9\]) matches any character between them (in this case 0 through 9).
+You can also use two asterisks to match nested directories;
+a/\*\*/z would match *a/z*, *a/b/z*, *a/b/c/z*, and so on.
+
+## Viewing the commit history
+
+After you have created several commits, or if you have cloned a repository with
+an existing commit history, you\'ll probably want to look back to see what has
+happened. The most basic and powerful tool to do this is the `git log`
+command.
+
+    $ git log
+    co  mmit 8b755eb400a1db7f88ca2058094321dcefea7f9c (HEAD -> feature/vcs, origin/feature/vcs)
+    Author: Serhii Horodilov <sgorodil@gmail.com>
+    Date:   Wed Aug 16 15:26:39 2023 +0300
+
+        Update gitflow diagram
+
+    commit 1e131a0c9faee2a22ea2bae8f31f8c7ee04fefc5
+    Author: Serhii Horodilov <sgorodil@gmail.com>
+    Date:   Wed Aug 16 14:46:39 2023 +0300
+
+        fixup! Add translations to VSC documents
+
+    commit 895dc24343fbbe25c3c94b25091ac64ac8aea53d
+    Author: Serhii Horodilov <sgorodil@gmail.com>
+    Date:   Wed Aug 16 14:42:10 2023 +0300
+
+        Add translations to VSC documents
+
+By default, with no arguments, `git log` lists the commits made in that
+repository in reverse chronological order; that is, the most recent commits
+show up first. As you can see, this command lists each commit with its SHA-1
+checksum, the author\'s name and email, the date written, and the commit
+message.
+
+One of the more helpful options is `-p` or `--patch`, which shows the
+difference (the *patch* output) introduced in each commit. You can also
+limit the number of log entries displayed, such as using `-<number>` to
+show only desired number of latest entries.
+
+    $ git log -p -1
+    commit 8b755eb400a1db7f88ca2058094321dcefea7f9c (HEAD -> feature/vcs, origin/feature/vcs)
+    Author: Serhii Horodilov <sgorodil@gmail.com>
+    Date:   Wed Aug 16 15:26:39 2023 +0300
+
+        Update gitflow diagram
+
+    diff --git a/assets/mermaid/git/gitflow.mmd b/assets/mermaid/git/gitflow.mmd
+    index 6287bbb..4e4eab7 100644
+    --- a/assets/mermaid/git/gitflow.mmd
+    +++ b/assets/mermaid/git/gitflow.mmd
+    @@ -19,8 +19,6 @@ gitGraph
+         commit
+         branch feature/C
+         commit
+    -    commit
+    -    commit
+
+     %% working with hotfix branch
+         checkout hotfix
+    @@ -35,7 +33,6 @@ gitGraph
+     %% working with feature-b branch
+         checkout feature/A
+         commit
+    -    commit
+         checkout develop
+         merge feature/A
+     %% work with feature-a branch
+
+This option display the same information but with a diff directly following
+each entry. This is very helpful for code review or to quickly browse what
+happened during a series of commits that a collaborator has added. You can also
+use a series of summarizing options with `git log`.
+
+If you want to see some abbreviated stats for each commit, you can use the
+`--stat` option:
+
+    $ git log -1 --stat
+    commit 8b755eb400a1db7f88ca2058094321dcefea7f9c (HEAD -> feature/vcs, origin/feature/vcs)
+    Author: Serhii Horodilov <sgorodil@gmail.com>
+    Date:   Wed Aug 16 15:26:39 2023 +0300
+
+        Update gitflow diagram
+
+     assets/mermaid/git/gitflow.mmd | 3 ---
+     1 file changed, 3 deletions(-)
+
+    commit 1e131a0c9faee2a22ea2bae8f31f8c7ee04fefc5
+    Author: Serhii Horodilov <sgorodil@gmail.com>
+    Date:   Wed Aug 16 14:46:39 2023 +0300
+
+        fixup! Add translations to VSC documents
+
+     src/_locales/uk/LC_MESSAGES/vcs.po | 6 +++---
+     1 file changed, 3 insertions(+), 3 deletions(-)
+
+Another really useful option is `--pretty`. This option changes the log
+output to formats other that the default. A few prebuilt option values are
+available for you to use. The `oneline` value for this option prints each
+commit on a single line, which is useful if you\'re look a lot of commits.
+In addition, the `short`, `full`, and `fuller` values show the output
+in roughly the same format but with less or more information.
+
+    $ git log --pretty=oneline
+    8b755eb400a1db7f88ca2058094321dcefea7f9c (HEAD -> feature/vcs, origin/feature/vcs) Update gitflow diagram
+    1e131a0c9faee2a22ea2bae8f31f8c7ee04fefc5 fixup! Add translations to VSC documents
+    895dc24343fbbe25c3c94b25091ac64ac8aea53d Add translations to VSC documents
+    30cb1a2db3d62210010b05df634e1ec87e5ef748 Fix apostrophe for VCS files
+    79427a88defef82bc92482cfaf7da5fba3260f5e Add commit document (draft)
+    0786a699e6901a6c968090422b3cec789402ad21 Update branches document
+    74710531809a9cbbdec1979ef8ae775a034c2027 Fixed GitFlow branches list
+
+    $ git log -10 --pretty=format:"%h - %an - %ad"
+    8b755eb - Serhii Horodilov - Wed Aug 16 15:26:39 2023 +0300
+    1e131a0 - Serhii Horodilov - Wed Aug 16 14:46:39 2023 +0300
+    895dc24 - Serhii Horodilov - Wed Aug 16 14:42:10 2023 +0300
+    30cb1a2 - Serhii Horodilov - Wed Aug 16 14:41:49 2023 +0300
+    79427a8 - Serhii Horodilov - Mon Jul 31 14:31:08 2023 +0300
+    0786a69 - Serhii Horodilov - Mon Jul 31 14:30:54 2023 +0300
+    7471053 - Serhii Horodilov - Fri Jul 28 15:13:15 2023 +0300
+    be60eb3 - Serhii Horodilov - Fri Jul 28 14:54:09 2023 +0300
+    24972b1 - Serhii Horodilov - Fri Jul 28 14:53:37 2023 +0300
+    4a9cfe4 - Serhii Horodilov - Fri Jul 28 14:32:53 2023 +0300
+
+  ---------------------------------------------------------------
+  Specifier   Description of Output
+  ----------- ---------------------------------------------------
+  %H          Commit hash
+
+  %h          Abbreviated commit hash
+
+  %T          Tree hash
+
+  %t          Abbreviated tree hash
+
+  %P          Parent hashes
+
+  %p          Abbreviated parent hashes
+
+  %an         Author name
+
+  %ae         Author email
+
+  %ad         Author date (format respects the \--date=option)
+
+  %ar         Author date, relative
+
+  %cn         Committer name
+
+  %ce         Committer email
+
+  %cd         Committer date
+
+  %cr         Committer date, relative
+
+  %s          Subject
+  ---------------------------------------------------------------
+
+The `oneline` and `format` option values are particularly useful with
+another `log` option called `--graph`. This option adds a nice little
+ASCII graph showing your branch and merge history:
+
+    $ git log --pretty=format:"%h %s" --graph
+    * f9b988f Created base documentation structure
+    * 3fabf55 Started global course updated
+    *   06662ae Merge pull request #13 from edu-python-course/master
+    |\
+    | * 3579eea Update to suite edu-python-course/blog#74
+    |/
+    *   3fb7725 Merge remote-tracking branch 'origin/master'
+    |\
+    | *   181b66d Merge remote-tracking branch 'origin/master'
+    | |\
+    | * | 52e0ef8 add lesson21 hw
+    * | | 830a246 fix lesson32 hw
+    | |/
+    |/|
+    * | 59697e9 fix lesson2 typos
+    * | a6f77db fix lesson2 typos
+    * | 213b220 fix lesson2 typos
+    * | 9b69f5f fix lesson2 typos
+    * | 6a0b9c8 fix lesson2 typos
+    |/
+    * bda497f add lesson2
+
+There are many more output-formatting options to `git log`. Common options to
+`git log` are:
+
+  -----------------------------------------------------------------------------
+  Option              Description
+  ------------------- ---------------------------------------------------------
+  -p                  Show the patch introduced with each commit.
+
+  \--stat             Show statistics for files modified in each commit.
+
+  \--shortstat        Display only the changed/insertions/deletions line
+                      from the \--stat command.
+
+  \--name-only        Show the list of files modified after the commit
+                      information.
+
+  \--name-status      Show the list of files affected with
+                      added/modified/deleted information as well.
+
+  \--abbrev-commit    Show only the first few characters of the SHA-1
+                      checksum instead of all 40.
+
+  \--relative-date    Display the date in a relative format (for example,
+                      \"2 weeks ago\") instead of using the full date format.
+
+  \--graph            Display an ASCII graph of the branch and merge history
+                      beside the log output.
+
+  \--pretty           Show commits in an alternate format. Option values
+                      include oneline, short, full, fuller, and format (where
+                      you specify your own format).
+
+  \--oneline          Shorthand for \--pretty=oneline \--abbrev-commit used
+                      together.
+  -----------------------------------------------------------------------------
+
+### Limiting log output
+
+In addition to output-formatting options, `git log` takes a number of useful
+limiting options; that is options that let you show only a subset of commits.
+You\'ve seen one such option already \-- the `-<number>` (e.g. `-2` or
+`-10`) option, which displays only the given number of latest commits.
+
+    $ git log -5 --oneline
+    db87ca0 (HEAD -> feature/vcs) fixup! Add commit history section (git log)
+    df9d599 Add commit history section (git log)
+    8b755eb (origin/feature/vcs) Update gitflow diagram
+    1e131a0 fixup! Add translations to VSC documents
+    895dc24 Add translations to VSC documents
+
+However, the time-limiting options such as `--since` and `--until` are very
+useful. For example, the command to get the list of commits made in the last
+two weeks:
+
+    $ git log --since=2.weeks
+
+This command works with lots of formats - you can specify a specific date like
+`"2022-02-24"`, or relative date such as `"2 years 1 days 3 minutes ago"`.
+
+The last really useful option to pass to `git log` as a filter is a path. If
+you specify a directory or file name, you can limit the log output to commits
+that introduced a change to those files. This is always the last option and
+is generally preceded by double dashes (`--`) to separate the paths from
+the options:
+
+    $ git log --oneline -- src/vcs/basics.txt
+    30cb1a2 Fix apostrophe for VCS files
+    4a9cfe4 Move mermaid diagrams to a dedicated folder (git)
+    80a1ab3 Add branching and merging document
+    3978779 Add committing changes section
+    a40712a Add git ignore section
+    e92b12f Add making changes section
+    c23f8ff Update getting repository section
+    582569d Add Git basics document (draft)
+
+## Undoing things
+
+At any stage, you may want to undo something.
+
+One of the common undos takes place when you commit too early and possibly
+forget to add some files, or you mess up your commit message. If you want
+to redo that commit, make the additional changes you forgot, stage them,
+and commit again using the `--amend` option:
+
+    $ git commit --amend
+
+E.g.
+
+    $ git commit -m "Initial commit"
+    $ git add forgotten_file
+    $ git commit --amend
+
+### Unstaging a staged file
+
+The next two sections demonstrate how to work with your staging area and
+working directory changes. The nice part is that the command you use to
+determine the state of those two areas also reminds you how to undo changes
+to them.
+
+    $ git add *
+    $ git status
+    On branch master
+
+    Changes to be committed:
+        (use "git reset HEAD <file>..." to unstage)
+            renamed: README.md -> README
+            modified: CONTRIBUTING.md
+    $ git reset HEAD CONTRIBUTING.md
+    Unstaged changes after reset:
+    M CONTRIBUTING.md
+    $ git status
+    On branch master
+
+    Changes to be committed:
+        (use "git reset HEAD <file>..." to unstage)
+            renamed: README.md -> README
+
+    Changes not staged for commit:
+        (use "git add <file>..." to update what will be committed)
+        (use "git checkout -- <file>..." to discard changes in working directory)
+            modified: CONTRIBUTING.md
+
+### Unmodifiyng a modified file
+
+What if you realize that you don\'t want to keep your changes to some file?
+You can easily unmodify it \-- **revert** it back to what it looked like when
+you last committed. `git status` also tells you how to do that:
+
+    (use "git checkout -- <file>..." to discard changes in working directory)
+
+It tells you pretty explicitly how to discard the changes you\'ve make.
+
+    $ git checkout -- CONTRIBUTING.md
+    $ git status
+    On branch master
+
+    Changes to be committed:
+        (use "git reset HEAD <file>..." to unstage)
+            renamed: README.md -> README
+
+### Undoing things with git restore
+
+::: versionadded
+2.23.0
+`git restore` is basically an alternative to `git reset`, from
+Git version 2.23.0 onwards, Git will use `git restore` instead of
+`git reset` for many undo operations.
+
+    $ git add *
+    $ git status
+    On branch master
+
+    Changes to be committed:
+        (use "git restore --staged <file>..." to unstage)
+            modified: CONTRIBUTING.md
+            renamed: README.md -> README
+    $ git restore --staged CONTRIBUTING.md
+    $ git status
+    On branch master
+
+    Changes to be committed:
+        (use "git restore --staged <file>..." to unstage)
+            renamed: README.md -> README
+
+    Changes not staged for commit:
+        (use "git add <file>..." to update what will be committed)
+        (use "git restore <file>..." to discard changes in working directory)
+            modified: CONTRIBUTING.md
+    $ git restore CONTRIBUTING.md
+    $ git status
+    On branch master
+
+    Changes to be committed:
+        (use "git restore --staged <file>..." to unstage)
+            renamed: README.md -> README
+
+!!! important
+
+
+    It's important to understand that git restore \<file\> is a dangerous
+    command. Any local changes you made to that file are gone \-- Git just
+    replaced that file with the last staged or committed version. Don\'t ever
+    use this command unless you absolutely know that you don't want those
+    unsaved local changes.
+

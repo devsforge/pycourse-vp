@@ -1,0 +1,5 @@
+::: {.meta description="SOLID principles" author="Serhii Horodilov" keywords="python, solid, single, responsibility, open, closed, liskov,
+substitution, interface, segregation, dependency, inversion,
+oop, object-oriented programming"}
+
+# SOLID Principles

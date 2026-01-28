@@ -1,0 +1,128 @@
+# Control Flow
+
+## `if` statement
+
+Perhaps the most well-known statement type is `if` statement. For example:
+
+<!-- if statement base example -->
+```python
+>>> x = int(input("Please enter an integer: "))
+>>> if x < 0:
+...     x = 0
+...     print("Negative x changed to 0")
+... elif x == 0:
+...     print("x is equal to zero")
+... elif x == 1:
+...     print("x is equal to one")
+... else:
+...     print("x is greater than one")
+```
+
+But let\'s dive into `if` statement with more simple examples.
+
+### How it works
+
+**if** statement is defined with a keyword `if` followed by a Boolean
+expression or any object and finished with colon. The statement requires
+a *body*: other statements to execute, also called an *if block*.
+The body is indented at the same distance from the left (in Python we use
+4 spaces to indent a single block of code).
+
+The body\'s statements will be executed only in case **if** expression is
+`True`.
+
+``` {.python linenos=""}
+from random import randint
+
+number: int = randint(1, 2)
+
+if not number % 2:  # the as number % 2 == 0
+    print(number, "is even")
+```
+
+The `print` statement on line #6 will be executed only for even value of
+`number` variable.
+
+### `else` block
+
+`if` can be used by its own, it can extend its behavior with `else` block.
+The general syntax for `else` body is the same: at least one indented
+statement. But `else` doesn\'t take any expression after it. This block of
+code will be executed only that the `if` statement truth check fails.
+
+``` {.python linenos=""}
+from random import randint
+
+number: int = randint(1, 2)
+
+if not number % 2:
+    print(number, "is even")
+else:
+    print(number, "is odd")
+```
+
+You can attach **only one** else block to **if statement**. And you cannot use
+`else` statement on its own - this will cause *SyntaxError*.
+
+### `elif` block(s)
+
+`elif` (*else if*) statement may be considered as semi-statement between
+`if` and `else` statements. In case your program has more than two
+dedicated choices you are able to extends control flow by appending
+`elif` blocks after `if` statement. The syntax is pretty similar to `if`
+statement. Each `elif` has its own boolean expression or an object to test
+for the truth value.
+
+You can attach as many `elif` statements as it needed. But you cannot use
+`elif` without `if` statement.
+
+Python will test conditions in `if` and `elif` statements from top to
+bottom. The first one, which considered to be `True` will be executed.
+All others will be skipped.
+
+If there were no truth conditions `else` block will be executed (if exists).
+
+``` python
+>>> x = int(input("Enter some integer number: "))
+>>> if not x % 5 and not x % 3: # the same as x % 5 == 0 and x % 3 == 0
+...     print(x, "is divisible by 5 and 3")
+... elif not x % 5:
+...     print(x, "is divisible by 5")
+... elif not x % 3:
+...     print(x, "is divisible by 3")
+... else:
+...     print(x, "is not divisible by 5 or 3")
+```
+
+!!! note
+
+
+    The order conditions appears matter.
+    The truth test goes from top to bottom and stops at first expression
+    which is `True`.
+
+
+### Usage
+
+`if/elif/else` statements help you to control which portion of your code is
+executed based on conditions from outer scope.
+
+``` {.python linenos=""}
+# Ask user for input
+grade = int(input("Enter your grade (0-100): "))
+
+# Use if/elif/else statements to assign letter grade
+if grade >= 90:
+    letter_grade = "A"
+elif grade >= 80:
+    letter_grade = "B"
+elif grade >= 70:
+    letter_grade = "C"
+elif grade >= 60:
+    letter_grade = "D"
+else:
+    letter_grade = "F"
+
+# Print the letter grade
+print("Your letter grade is:", letter_grade)
+```

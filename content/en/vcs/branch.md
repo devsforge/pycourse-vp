@@ -1,0 +1,397 @@
+# Branches and Merging
+
+## About branches
+
+To really understand the way Git does branching, we need to take a step back
+and examine how Git stores its data. Git doesn\'t store data as a series of
+changesets or differences, but instead as a series of snapshots. When you make
+a commit, Git stores a commit object that contains a pointer to the snapshot
+of the content you staged. This object also contains the author\'s name and
+email address, the message that you typed, and pointers to the commit or
+commits that directly came before this commit (its parent or parents):
+zero parents for the initial commit, one parent for a normal commit,
+and multiple parents for a commit that results from a merge of two or more
+branches.
+
+::: only
+html
+
+::: {.mermaid align="center" caption="Commits tree"}
+/../assets/mermaid/git/commits.mmd
+
+::: only
+latex
+
+<figure>
+<img src="/../assets/mermaid/git/commits.mmd.png" class="align-center" alt="/../assets/mermaid/git/commits.mmd.png" />
+<figcaption>Commits tree</figcaption>
+</figure>
+
+A branch in Git is simply a lightweight movable pointer to one of these
+commits. The default branch name in Git is master. As you start making commits,
+you\'re given a master branch that points to the last commit you made.
+Every time you commit, the master branch pointer moves forward automatically.
+
+![](/../assets/img/git-commits.svg){.align-center}
+
+## Branch management
+
+The `git branch` command does more that create and delete branches. If you
+run it with no arguments, you get a simple listing of your current branches:
+
+    $ git branch
+      devel
+      feature/contributing
+      feature/legacy
+      feature/lib-ms
+      feature/libms
+      feature/pdf-builder
+    * feature/vcs
+      master
+
+To see all the branches that contain work you haven\'t yet merged in, use
+`--no-merged` option:
+
+    $ git branch --no-merged
+      feature/contributing
+      feature/lib-ms
+      feature/libms
+
+Branches listed in the output has work, that isn\'t merged to current branch.
+So, deleting them via `git branch -d` will fail.
+
+### Create branches
+
+There are few ways to create a new branch in a Git repository. The most common
+way is to use `git branch` command.
+
+    git branch <branch_name> [parent_commit]
+
+Pointer to a parent commit is optional. By default the parent commit is set
+to the latest one available (HEAD pointer) at the moment of the branch
+creation. You can also switch to the newly created branch just after its
+creation using:
+
+    git checkout -b <branch_name> [parent_commit]
+
+### Switching branches
+
+To switch to an existing branch, you run the `git checkout` command.
+
+    $ git branch
+      devel
+      feature/contributing
+      feature/legacy
+      feature/lib-ms
+      feature/libms
+      feature/pdf-builder
+    * feature/vcs
+      master
+
+    $ git checkout devel
+    Switched to branch 'devel'
+    Your branch is up to date with 'origin/devel'.
+
+## Basic branching and merging
+
+First, let\'s say you\'re working on your project and have a couple of commits
+already on the `master` branch. You\'ve decided that you\'re going to work on
+**feature #53** in whatever issue-tracking system your company uses. To create
+a new branch and switch to it at the same time, you can run the
+`git checkout` command with the `-b` switch:
+
+    $ git checkout -b feature/GH-53
+    Switched to a new branch "feature/GH-53"
+
+This is shorthand for:
+
+    $ git branch feature/GH-53
+    $ git checkout feature/GH-53
+
+In deed this creates a new branch pointer, aimed to the latest commit present
+on `master` branch. But, from now your branch is `feature/GH-53`. So, doing
+commits moves the feature branch pointer forward, because you have it checkout
+out (that is, your `HEAD` is pointing to it).
+
+Now, lets assume the \"GH-53\" is done, and you need to bring commits from
+the `feature/GH-53` branch back to `master`.
+
+### Merging branches
+
+You need to switch back to `master` branch and use `git merge` command, to
+merge changes (commits) from the source branch into target.
+
+    $ git checkout master
+    $ git merge feature/GH-53
+    Updating f42c576..3a0874c
+    Fast-forward
+        index.html | 2 ++
+        1 file changed, 2 insertions(+)
+
+You\'ll notice phrase \"fast-forward\" in that merge. Because the commit pointed
+to by the branch `feature/GH-53` you merged in was directly ahead of the last
+commit on `master` branch, Git simply moves the pointer forward.
+
+Changes from `feature/GH-53` are now in the snapshot of the commit pointed
+to by the `master` branch.
+
+::: only
+html
+
+::: {.mermaid align="center" caption="Fast-forward merge"}
+/../assets/mermaid/git/merge-1.mmd
+
+::: only
+latex
+
+<figure>
+<img src="/../assets/mermaid/git/merge-1.mmd.png" class="align-center" alt="/../assets/mermaid/git/merge-1.mmd.png" />
+<figcaption>Fast-forward merge</figcaption>
+</figure>
+
+Now, lets assume another developer started working on `feature/GH-54` at
+the same time. And there are few commits on this feature branch. Suppose,
+the developer decided that work on **GH-54** is finished and they want to
+merge their feature branch into `master`.
+
+    $ git branch
+      master
+    * feature/GH-54
+    $ git checkout master
+    $ git merge feature/GH-54
+    Merge made by the 'recursive' strategy.
+        index.html | 1 +
+        1 file changed, 1 insertion(+)
+
+This looks a bit different than the `feature/GH-53` merge. In this case,
+development history has diverged from some older point. Because the commit
+on the branch you\'re on isn\'t a direct ancestor of the branch you\'re merging
+in, Git has to do some work. In this case, Git does a simple three-way merge,
+using two snapshots pointed to by the branch tips and the common ancestor of
+the two.
+
+Instead of just moving the branch pointer forward, Git creates a new snapshot
+that results from this three-way merge and automatically creates a new commit
+that points to it. This is referred to as a *merge commit*, and is a special in
+that it has more than one parent.
+
+::: only
+html
+
+::: {.mermaid align="center" caption="Merge commit"}
+/../assets/mermaid/git/merge-2.mmd
+
+::: only
+latex
+
+<figure>
+<img src="/../assets/mermaid/git/merge-2.mmd.png" class="align-center" alt="/../assets/mermaid/git/merge-2.mmd.png" />
+<figcaption>Merge commit</figcaption>
+</figure>
+
+### Merge conflicts
+
+Occasionally, the merge process doesn\'t go smoothly. If the same part of
+the same file is changed differently in the two branches you\'re merging, Git
+won\'t be able to merge them cleanly.
+
+    $ git merge vcs
+    Auto-merging branches.txt
+    CONFLICT (content): Merge conflict in branches.txt
+    Automatic merge failed; fix conflicts and then commit the result
+
+Git hasn\'t automatically created a new merge commit. It has paused the process
+while you resolve the conflict. If you want to see which files are unmerged at
+any point after a merge conflict, you can run `git status`:
+
+    $ git status
+    On branch master
+
+    You have unmerged paths.
+        (fix conflicts and run "git commit")
+
+    Unmerged paths:
+        (use "git add <file>..." to mark resolution)
+
+        both modified: branches.txt
+
+    no changes added to commit (use "git add" and/or "git commit -a")
+
+Anything that has merge conflicts and hasn\'t been resolved is listed as
+unmerged. Git adds standard conflict-resolution markers to the files that
+have conflicts, so you can open them manually and resolve those conflicts.
+Your file contains a section that looks something like this:
+
+    <<<<<<< HEAD:branches.txt
+    Anything that has merge conflicts and has not been resolved is listed as
+    =======
+    Anything that has merge conflicts
+    and hasn't been resolved is listed as
+    </div>
+    >>>>>>> vcs:branches.txt
+
+This means the version in `HEAD` (your `master` branch, because that was
+what you had checked out when you ran merge command) is the top part of that
+block (everything above the \"=======\"), while the version in `vcs` branch
+looks like everything in the bottom part. In order to resolve the conflict,
+you have to either choose one side or the other or merge the contents yourself.
+
+When conflicts are resolved, you can run `git status` command again:
+
+    $ git status
+    On branch master
+
+    All conflicts fixed but you are still merging.
+        (use "git commit" to conclude merge)
+
+    Changes to be committed:
+        modified: branches.txt
+
+If you\'re happy with that, and you verify that everything that had conflicts
+has been staged, you can run `git commit` for finalize the merge commit.
+
+## Rebasing
+
+In Git, there two main ways to integrate changes from one branch into another:
+the `merge` and the `rebase`.
+
+Earlier, there was an example of diverged work and commits made on two
+different branches.
+
+::: only
+html
+
+::: {.mermaid align="center" caption="Before rebase"}
+/../assets/mermaid/git/rebase-1.mmd
+
+::: only
+latex
+
+<figure>
+<img src="/../assets/mermaid/git/merge-2.mmd.png" class="align-center" alt="/../assets/mermaid/git/merge-2.mmd.png" />
+<figcaption>Merge commit</figcaption>
+</figure>
+
+The easiest way to integrate the branches, as we\'ve already covered, is
+the `merge` command. It performs a three-way merge between the two latest
+branch snapshots, and the most recent common ancestor of the two, creating
+a new snapshot (and commit).
+
+However, there is another way: you can take the patch of the change that was
+introduced in `master` and reapply it on top of `feature`. In Git, this is
+called *rebasing*. With `rebase` command, you can take all the changes that
+were committed on one branch and replay them on a different branch.
+
+    $ git checkout feature
+    $ git rebase master
+    First, rewinding head to replay your work on top of it...
+    Applying: added staged command
+
+This operation works by going to the common ancestor of the two branches,
+getting the diff introduced by each commit of the branch you\'re on, saving
+those diffs to temporary files, resetting the current branch to the same
+commit as the branch you are rebasing onto, and finally applying each change
+in turn.
+
+::: only
+html
+
+::: {.mermaid align="center" caption="After rebase"}
+/../assets/mermaid/git/rebase-2.mmd
+
+::: only
+latex
+
+<figure>
+<img src="/../assets/mermaid/git/rebase-2.mmd.png" class="align-center" alt="/../assets/mermaid/git/rebase-2.mmd.png" />
+<figcaption>After rebase</figcaption>
+</figure>
+
+!!! note
+
+
+    Other maintainers prefer to rebase (or cherry-pick) contributed work on
+    top of their `master` branch, rather then merging it in, to keep
+    a mostly linear history.
+
+
+## Cherry-picking
+
+The other way to move introduced work from one branch to another is to
+*cherry-pick* it. A cherry-pick in Git is a rebase for a single commit.
+It takes the patch that was introduced in a commit and tries to reapply
+it on the branch you\'re currently on. This is useful if you have a number
+of commits on a topic branch and you want to integrate only one of them,
+or if you only have one commit on a topic branch and you\'d prefer to
+cherry-pick it rather than run rebase.
+
+::: only
+html
+
+::: {.mermaid align="center" caption="Cherry-pick a commit"}
+/../assets/mermaid/git/cherry-pick.mmd
+
+::: only
+latex
+
+<figure>
+<img src="/../assets/mermaid/git/cherry-pick.mmd.png" class="align-center" alt="/../assets/mermaid/git/cherry-pick.mmd.png" />
+<figcaption>Cherry-pick a commit</figcaption>
+</figure>
+
+    $ git cherry-pick e43a6
+    [master 0288270] Important commit
+     Date: Thu Aug 17 20:30:05 2023 +0300
+     3 files changed, 17 insertions(+), 3 deletions(-)
+
+## Branching strategies
+
+Branching strategy in version control systems defines how branches are created,
+managed, and used in a project\'s development process.
+It helps teams collaborate effectively, isolate changes, and organize
+development efforts. A good branching strategy provides clarity on how to work
+with branches, minimizes conflicts, and enables a smooth and structured
+development workflow.
+
+GitFlow is a popular branching strategy that provides a well-defined model for
+managing branches in a Git repository. It was introduced by Vincent Driessen
+and is based on the idea of using two main branches: \"master\" and \"develop.\"
+
+-   **Master Branch**: The \"master\" branch represents the stable version of
+    the codebase. It should always contain production-ready code and be free
+    from any major issues. The \"master\" branch is protected, and only release
+    versions are merged into it.
+-   **Develop Branch**: The \"develop\" branch is where the ongoing development
+    and integration of features take place. It serves as the integration branch
+    for various feature branches and should also contain a stable version of
+    the code.
+-   **Feature Branches**: For each new feature or bug fix, a dedicated
+    \"feature\" branch is created off the \"develop\" branch. These branches are
+    short-lived and exist only for the duration of the feature development.
+-   **Release Branches**: When the development on the \"develop\" branch is ready
+    for a release, a \"release\" branch is created. The release branch is used
+    for testing, bug fixing, and preparing for deployment.
+-   **Hotfix Branches**: If a critical issue is discovered in the production
+    version, a \"hotfix\" branch is created from the \"master\" branch. This allows
+    for a quick fix without affecting ongoing development on the \"develop\"
+    branch.
+
+GitFlow provides a structured approach to managing branching in a collaborative
+development environment. It ensures that the main branches remain stable, and
+new features and bug fixes are integrated smoothly before being released.
+This strategy is particularly useful for projects with regular releases and
+a team working on multiple features concurrently.
+
+::: only
+html
+
+::: {.mermaid align="center" caption="GitFlow diagram"}
+/../assets/mermaid/git/gitflow.mmd
+
+::: only
+latex
+
+<figure>
+<img src="/../assets/mermaid/git/gitflow.mmd.png" class="align-center" alt="/../assets/mermaid/git/gitflow.mmd.png" />
+<figcaption>GitFlow diagram</figcaption>
+</figure>

@@ -1,0 +1,325 @@
+# Errors and Exceptions
+
+There are (at least) two distinguishable kinds of errors:
+*syntax errors* and *exceptions* docs-python:errors.
+
+## Syntax errors
+
+Syntax errors are also known as parsing errors.
+
+``` python
+>>> while True print("the loop is running...")
+  File "<string>", line 1
+    while True print('the loop is running...')
+               ^^^^^
+SyntaxError: invalid syntax
+```
+
+The parser repeats the offending line and displays a little \"arrow\" pointing at
+the earliest point in the line where the error was detected. The error is
+caused by (or at least detected at) the token preceding the arrow.
+
+## Exceptions
+
+Even if a statement or expression is syntactically correct, it may cause an
+error when an attempt is made to execute it. Errors detected during execution
+are called exceptions and are not unconditionally fatal: you will soon learn
+how to handle them in Python programs.
+
+Exceptions come in different types, and the type is printed as part of
+the message.
+
+For example, the `div` function implemented as
+
+``` python
+def div(x: Union[int, float], y: Union[int, float]) -> float:
+    """Return the result of dividing `x` by `y`."""
+
+    return x / y
+```
+
+may cause a `ZeroDivisionError` exception in case 0 is passed as `y`
+parameter.
+
+Standard exception names are built-in identifiers (not reserved keywords).
+
+::: seealso
+The list of [built-in exceptions](https://docs.python.org/library/exceptions.html#bltin-exceptions)
+
+## Tracebacks
+
+!!! note
+
+
+    \"File\" is replaced with a *dummy string* within the examples.
+
+
+Let\'s assume the following modules structure:
+
+    /
+    |-- main.py
+    |-- func.py
+
+The **main** module imports a `div` function implemented above from the
+**func** module. The code in main is implemented as follows:
+
+``` python
+from func import div
+
+if __name__ == "__main__":
+    x = int(input("Please enter a number: "))
+    y = int(input("Please enter a number: "))
+    print(f"{x = }, {y = } -> {div(x, y) = }")
+```
+
+While running the code with correct inputs it will work fine. But there are
+at two exceptions for this script.
+
+The first one is related on type conversion. While running the main script
+there is case of invalid input.
+
+    Please enter a number: 100
+    Please enter a number: one
+    Traceback (most recent call last):
+      File "path/to/module.py", line 5, in <module>
+        y = int(input("Please enter a number: "))
+    ValueError: invalid literal for int() with base 10: 'one'
+
+Note the **traceback** indicates the module and the exact line of code that
+causes the exception.
+
+The second one exception occurs when a 0 is passed as the second parameter to
+`div` function. The traceback would look like:
+
+    Please enter a number: 100
+    Please enter a number: 0
+    Traceback (most recent call last):
+      File "path/to/main.py", line 6, in <module>
+        print(f"{x = }, {y = } -> {div(x, y) = }")
+      File "path/to/func.py", line 11, in div
+        return x / y
+    ZeroDivisionError: division by zero
+
+The traceback indicates all calls (top to bottom) that cause an exception.
+
+## Exception handling
+
+It is possible to write programs that handle selected exceptions.
+The `try` statement is used to do that.
+
+The try statement works as follows.
+
+1.  First, the try clause (the statement(s) between the try and except
+    keywords) is executed.
+2.  If no exception occurs, the except clause is skipped and execution of
+    the try statement is finished.
+3.  If an exception occurs during execution of the try clause, the rest of
+    the clause is skipped. Then, if its type matches the exception named after
+    the except keyword, the except clause is executed, and then execution
+    continues after the try/except block.
+4.  If an exception occurs which does not match the exception named in
+    the except clause, it is passed on to outer try statements; if no handler
+    is found, it is an unhandled exception and execution stops with a message
+    as shown above.
+
+``` python
+from func import div
+
+if __name__ == "__main__":
+    x = int(input("Please enter a number: "))
+    y = int(input("Please enter a number: "))
+    try:
+        print(f"{x = }, {y = } -> {div(x, y) = }")
+    except:
+        print("An exception occurs")
+```
+
+A try statement may have more than one except clause, to specify handlers for
+different exceptions.
+
+``` python
+from func import div
+
+if __name__ == "__main__":
+    x = int(input("Please enter a number: "))
+    y = int(input("Please enter a number: "))
+    try:
+        print(f"{x = }, {y = } -> {div(x, y) = }")
+    except (ValueError, ZeroDivisionError):
+        print("An exception occurs")
+```
+
+``` python
+from func import div
+
+if __name__ == "__main__":
+    x = int(input("Please enter a number: "))
+    y = int(input("Please enter a number: "))
+    try:
+        print(f"{x = }, {y = } -> {div(x, y) = }")
+    except ValueError as exc:
+        print(f"Value cannot be converted, {exc}")
+    except ZeroDivisionError:
+        print(f"Zero division error: {y = }")
+```
+
+### Handling ALL exception
+
+It\'s a bad practice to handle **all** exceptions.
+
+When indicating an `except` block without specifying an exception to catch it
+will work for any exception, that occurs in `try` block. The same is relevant
+for handling `BaseException` and `Exception`. But you can never say what
+exact goes wrong.
+
+!!! note
+
+
+    However, this scenario may work for logging an exception and raising
+    it again to be handled on upper levels.
+
+    ``` python
+    try:
+        ...    # some code that may raise an exception
+    except:
+        ...    # logging actions
+        raise  # raise an exception again
+    ```
+
+
+    except:
+        ...
+
+    except (BaseException, Exception):
+        ...
+
+    except Exception:
+        ...
+
+All exceptions are inherited from `Exception` class, which is subclass of
+`BaseException`. So, you can never know what exactly goes wrong with your
+code.
+
+### `finally` statement
+
+The `try` statement cannot be used itself. This will cause `SyntaxError`.
+Either `except` or `finally` block is required to be included.
+
+While the `except` block tries to catch the exceptions if any,
+the `finally` block will be always executed regardless of the exception
+occurs.
+
+``` python
+try:
+    ...  # some code that may cause an exception
+finally:
+    ...  # this code will be always executed
+
+try:
+    result = 10 // 2
+except ZeroDivisionError:
+    print("zero division")
+finally:
+    print("it's finished")
+
+try:
+    result = 10 // 0
+except ZeroDivisionError:
+    print("zero division")
+finally:
+    print("it's finished")
+```
+
+### `else` statement
+
+The `try` statement can also use `else` (which is optional).
+The statements within this block will be execute only in case there were
+no exceptions raised while running the `try`.
+
+``` python
+try:
+    result = 10 // 2
+except ZeroDivisionError:
+    print("zero division")
+else:
+    print("no errors occurred")  # this **WILL** be printed out
+
+try:
+    result = 10 // 0
+except ZeroDivisionError:
+    print("zero division")
+else:
+    print("no errors occurred")  # this **WILL NOT** be printed out
+```
+
+## Raising exceptions
+
+The `raise` statement allows the programmer to force a specified exception
+to occur. The sole argument to raise indicates the exception to be raised.
+This must be either an exception instance or an exception class (a class that
+derives from `BaseException`, such as `Exception` or one of its
+subclasses). If an exception class is passed, it will be implicitly
+instantiated by calling its constructor with no arguments.
+
+``` python
+raise NameError("name error")
+raise NameError
+```
+
+`raise` statement itself will re-raise all the exceptions within the context.
+Also exceptions can be raised again from the `except` block. It\'s a common
+pattern to catch the exception for loggers and when re-raise it.
+
+``` python
+try:
+    result = 10 // 0
+except:
+    print("zero division")
+    raise
+```
+
+## Creating custom exceptions
+
+Programs may name their own exceptions by creating a new exception class.
+Exceptions should typically be derived from the Exception class, either
+directly or indirectly.
+
+Exception classes can be defined which do anything any other class can do,
+but are usually kept simple, often only offering a number of attributes that
+allow information about the error to be extracted by handlers for
+the exception.
+
+Most exceptions are defined with names that end in \"Error\", similar to the
+naming of the standard exceptions.
+
+Many standard modules define their own exceptions to report errors that may
+occur in functions they define.
+
+<!-- User-defined exception -->
+```python
+class InvalidInputError(Exception):
+    """This is a custom exception for demo needs"""
+
+
+class NegativeError(ValueError):
+    """Raised when a negative value passed"""
+
+
+def sum_positive(x: int, y: int) -> int:
+    """Return the sum of positive integers"""
+
+    if x < 0 or y < 0:
+        raise NegativeError
+
+    return x + y
+
+
+try:
+    x = int(input("Enter number x: "))
+    y = int(input("Enter number y: "))
+    result = sum_positive(x, y)
+except ValueError:
+    raise InvalidInputError("could not convert to integer")
+except NegativeError:
+    print("this function works only with positive integers")
+```

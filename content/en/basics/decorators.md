@@ -1,0 +1,431 @@
+# Decorators
+
+Decorators provide a simple syntax for calling higher-order functions
+realpython:decorators.
+
+!!! important
+
+
+    There is some kind of misunderstanding in definitions.
+
+    **Decorator** is a function returning another function, usually applied
+    as a function transformation using the `@wrapper` syntax
+    docs-python:term-decorator.
+
+    However, that\'s no quit enough to describe it. The more complete
+    definition is:
+
+    **Decorator** is a structural design pattern that lets you attach new
+    behaviors to objects by placing these objects inside special wrapper
+    objects that contain the behaviors refactoring.guru:decorator.
+
+
+Before you understand decorators, you must first understand how functions
+work.
+
+## First-class objects
+
+In Python functions are [first-class objects](#first-class-objects). Everything in Python is an
+object. Functions are objects too.
+
+### Inner functions
+
+Functions can be nested. This means it is possible to define functions
+inside other functions.
+
+<!-- Nested functions example -->
+```python
+def heap_sort(origin: List[int]) -> List[int]:
+    """Return a sorted collection using the heap sort algorithm"""
+
+    def heapify(_ds: List[int], _size: int, _idx: int) -> List[int]:
+        ...
+
+    ...
+    for idx in range(size, -1, -1):
+        heapify(result, size, idx)
+    ...
+```
+
+The order in which inner functions are defined no matters. The function
+definition does not execute the function body; this gets executed only when
+the function is called. Furthermore, the inner functions are not defined until
+the parent function is called. They are locally scoped to their parent. Trying
+to call `heapify` function outside of `heap_sort` will cause `NameError`
+exception.
+
+### Functions are objects
+
+This means functions can be passed around and used as arguments, just like any
+other object (e.g. *int*, *str* etc.).
+
+``` python
+from typing import Callable
+
+
+def say_hello(name: str) -> str:
+    return f"Hello, {name}!"
+
+
+def be_awesome(name: str) -> str:
+    return f"Yo, {name}!"
+
+
+def greet_serhii(greeting_func: Callable) -> str:
+    return greeting_func("Serhii")
+
+
+if __name__ == "__main__":
+    print(f"{greet_serhii(say_hello) = }")
+    print(f"{greet_serhii(be_awesome) = }")
+```
+
+### Returning functions
+
+Since function can be passed as an argument, it may be returned from another
+function.
+
+``` python
+from typing import Callable
+
+
+def parent(idx: int) -> Callable:
+    def first_child():
+        return "this is the first child"
+
+    def second_child():
+        return "this is the second child"
+
+    return second if not num % 2 else first
+
+
+first = parent(1)
+second = parent(2)
+```
+
+!!! note
+
+
+    `parent` returns functions themselves, there are no parentheses.
+
+
+After running the code snippet above, `first` refers the `first_child`
+function from the inner `parent` scope. From now it can be used to call
+the target function it refers.
+
+``` 
+>>> first()
+"this is the first child"
+>>> second()
+"this is the second child"
+```
+
+## Simple decorators
+
+Now you\'re ready to move on and see the magical beast that is the Python
+decorators. Let\'s start with a simple example:
+
+``` python
+def decorator(func: Callable) -> Callable:
+    def wrapper():
+        print(f"before {func.__name__} call")
+        func()
+        print(f"after {func.__name__} call")
+
+    return wrapper  # no wrapper call, return reference to wrapper function
+
+def say_hello():
+    print("Hello!")
+
+say_hello_decorated = decorator(say_hello)
+```
+
+Running function:
+
+``` 
+>>> say_hello()
+Hello!
+>>> say_hello_decorated()
+before say_hello call
+Hello!
+after say_hello call
+```
+
+The common way to use decorators is to replace the original function with
+a decorated one:
+
+``` 
+>>> say_hello = decorator(say_hello)
+>>> say_hello()
+before say_hello call
+Hello!
+after say_hello call
+```
+
+`say_hello` function is the reference to the `decorator.<locals>.wrapper`,
+which itself is bound to the original `say_hello` function. There is a
+syntactic sugar to do this, called *pie-syntax*. The following example does
+exact the same things as the first decorator example:
+
+``` python
+def decorator(func: Callable) -> Callable:
+    def wrapper():
+        print(f"before {func.__name__} call")
+        func()
+        print(f"after {func.__name__} call")
+
+    return wrapper  # no wrapper call, return reference to wrapper function
+
+
+@decorator
+def say_hello():
+    print("Hello!")
+```
+
+!!! important
+
+
+    There is no way to *undecorate* object in Python. Once something is bound
+    to the decorator\'s wrapper - it is decorated forever.
+
+
+A decorated function still remains a **function**. So, it can be decorated
+once more time again, and again, and again\...
+
+``` python
+from typing import Callable
+
+
+def bread(func: Callable) -> Callable:
+    def wrapper():
+        print("<--bread-->")
+        func()
+        print("<--bread-->")
+
+    return wrapper
+
+
+def vegetables(func: Callable) -> Callable:
+    def wrapper():
+        print("~~~salad~~~")
+        print("***tomato***")
+        func()
+
+    return wrapper
+
+
+def cheese(func: Callable) -> Callable:
+    def wrapper():
+        func()
+        print("---cheese---")
+
+    return wrapper
+
+
+@bread
+@vegetables
+@cheese
+def sandwich():
+    print("_sliced_meat_")
+```
+
+``` 
+>>> sandwich()
+<--bread-->
+~~~salad~~~
+***tomato***
+_sliced_meat_
+---cheese---
+<--bread-->
+```
+
+!!! note
+
+
+    \"Wrapper\" is the alternative nickname for the Decorator pattern that
+    clearly expresses the main idea of the pattern. A wrapper is an object that
+    can be linked with some target object. The wrapper contains the same set of
+    methods as the target and delegates to it all requests it receives.
+    However, the wrapper may alter the result by doing something either before
+    or after it passes the request to the target.
+
+
+## Passing arguments to the wrapper
+
+Until now the examples use *simple* decorators. But what if the decorated
+function gets some arguments? This will cause `TypeError` exception that tell
+that \"arguments are missed\". This can be fixed with just passing arguments to
+the `wrapper` inner function.
+
+``` python
+import logging
+from typing import Callable
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+
+def log(func: Callable) -> Callable:
+    def wrapper(x, y):
+        logger.info("%s called", func.__name__)
+        return func(x, y)
+
+    return wrapper
+
+
+@log
+def sum_numbers(x, y):
+    return x + y
+```
+
+If case you\'re trying to make a generic decorator, you may pass `*args` and
+`**kwargs` instead of exact arguments:
+
+``` python
+from typing import Callable
+
+
+def generic_decorator(func: Callable) -> Callable:
+    def wrapper(*args, **kwargs):
+        ...  # do something before
+        result = func(*args, **kwargs)
+        ...  # do something after
+
+        return result
+
+    return wrapper
+```
+
+## Passing arguments to decorator
+
+At last it\'s time to know how to pass arguments to the decorator.
+Here is a simple implementation of `defer` decorator which deferred
+the function execution for some time:
+
+``` python
+import time
+from typing import Callable
+
+
+def slow_down(seconds: int = 3) -> Callable:
+    def decorator(func: Callable) -> Callable:
+        def wrapper(*args, **kwargs):
+            started_at = time.perf_counter()
+            time.sleep(seconds)
+            result = func(*args, **kwargs)
+            completed_in = round(time.perf_counter() - started_at, 2)
+            print("Completed in %.2f" % completed_in)
+
+            return result
+
+        return wrapper
+
+    return decorator
+
+
+@slow_down()
+def function_a():
+    return 42
+
+
+@slow_down(10)
+def function_b():
+    return 24
+```
+
+``` 
+function_a()
+Completed in 3.00
+function_b()
+Completed in 10.00
+```
+
+## Class decorators
+
+There are some pre-defined decorators exists for usage together with classes.
+They are:
+
+-   `classmethod`
+-   `staticmethod`
+-   `property`
+
+If you develop an intuitive understanding for their differences you\'ll be able
+to write object-oriented Python that communicates its intent more clearly and
+will be easier to maintain in the long run
+realpython:methods-demystified.
+
+### Class methods
+
+Instead of accepting a `self` parameter, class methods take a `cls`
+parameter that points to the class --- and not the object instance --- when
+the method is called.
+
+Because the class method only has access to this `cls` argument, it can\'t
+modify object instance state. That would require access to `self`.
+However, class methods can still modify class state that applies across all
+instances of the class.
+
+The common usage for `classmethod` is provide alternative initializers.
+
+### Static methods
+
+This type of method takes neither a `self` nor a `cls` parameter (but of
+course it\'s free to accept an arbitrary number of other parameters).
+
+Therefore a static method can neither modify object state nor class state.
+Static methods are restricted in what data they can access - and they\'re
+primarily a way to namespace your methods.
+
+It\'s tricky to explain `staticmethod` usage. Almost always you can create
+a dedicated function instead of static method. But sometimes you need to
+bind some logic independent from class itself or its instances to a class -it common to encapsulate it with `staticmethod`.
+
+### Properties
+
+It\'s a way to bind a method name to access it as an attribute. Properties are
+**read-only** by default. This means a value cannot be assigned to `property member`.
+
+### Some examples
+
+``` python
+import datetime
+
+
+class Person:
+    """Person class implementation"""
+
+    def __init__(self, first_name: str, last_name: str) -> None:
+        """Initialize instance"""
+
+        self.first_name = first_name
+        self.last_name = last_name
+
+    @classmethod
+    def from_fullname(cls, name: str) -> "Person":
+        """Return a person instance"""
+
+        first_name, last_name = name.rsplit(" ", 1)
+
+        return cls(first_name, last_name)
+
+    @staticmethod
+    def format_date(date: datetime.date) -> str:
+        """Return a formatted date as string"""
+
+        return date.strftime("%d-%m-%Y")
+
+    @property
+    def fullname(self) -> str:
+        """Return person's fullname"""
+
+        return " ".join([self.first_name, self.last_name])
+```
+
+``` 
+>>> sh = Person("Serhii", "Horodilov")
+>>> vp = Person.from_fullname("Vladyslav Ponomaryov")
+>>> sh.fullname
+'Serhii Horodilov'
+>>> vp.fullname
+'Vladyslav Ponomaryov'
+```

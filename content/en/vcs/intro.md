@@ -1,0 +1,92 @@
+# About version control (Git)
+
+Version control is a system that records changes to a file or set of files over
+time so that you can recall specific versions later. It allows you to revert
+selected files back to a previous state, revert the entire project back to
+a previous state, compare changes over time, see who last modified something
+that might be causing a problem, who introduced an issue and when, and more.
+
+In a DVCS (Distributed Version Control Systems) clients don\'t just
+check out the latest snapshot of the files; rather, they fully mirror
+the repository, including its full history. Thus, if any server dies, and
+these systems were collaborating via that server, any of the client
+repositories can be copied back up to the server to restore it. Every clone
+is really a full backup of all the data.
+
+<figure>
+<img src="/../assets/img/vcs-dvcs.svg" class="align-center" alt="/../assets/img/vcs-dvcs.svg" />
+<figcaption>Distributed version control diagram</figcaption>
+</figure>
+
+**What is Git?**
+
+The major difference between Git and any other VCS is the way Git thinks about
+its data. Conceptually, most other systems store information as a list of
+file-based changes. Git doesn\'t think of or store its data this way.
+Instead, Git thinks of its data more like a series of snapshots of a miniature
+filesystem.
+
+This is an important distinction between Git and nearly all other VCSs.
+It makes Git reconsider almost every aspect of version control that most
+other systems copied from the previous generation. This makes Git more like
+a mini filesystem with some incredibly powerful tools built on top of it,
+rather than simply a VCS.
+
+<figure>
+<img src="/../assets/img/git-snapshots.svg" class="align-center" alt="/../assets/img/git-snapshots.svg" />
+<figcaption>Storing data as snapshots of the project over time</figcaption>
+</figure>
+
+**Local operations**
+
+Most operations in Git need only local files and resources to operate \--generally no information is needed from another computer on your network.
+Because you have the entire history of the project right there on your local
+disk, most operations seem almost instantaneous.
+
+**Integrity**
+
+Everything in Git is checksummed before it is stored and is then referred
+to by that checksum. This means it\'s impossible to change the contents of
+any file or directory without Git knowing about it.
+
+**Repository files states**
+
+Git has three main states that your files can reside in:
+**modified**, **staged**, and **committed**:
+
+-   Modified means that you have changed the file but have not committed it
+    to your database yet.
+-   Staged means that you have marked a modified file in its current version
+    to go into your next commit snapshot.
+-   Committed means that the data is safely stored in your local database.
+
+::: only
+html
+
+::: {.mermaid align="center"}
+/../assets/mermaid/git/states.mmd
+
+::: only
+latex
+
+![](/../assets/mermaid/git/states.mmd.png){.align-center}
+
+The basic Git workflow goes something like this:
+
+1.  You modify files in your working tree.
+2.  You selectively stage just those changes you want to be part of your next
+    commit, which adds only those changes to the staging area.
+3.  You do a commit, which takes the files as they are in the staging area and
+    stores that snapshot permanently to your Git directory.
+
+## Command line
+
+There are a lot of different ways to use Git. There are the original
+command-line tools, and there are many graphical user interfaces of varying
+capabilities. For one, the command line is the only place you can run all Git
+commands \-- most of the GUIs implement only a partial subset of Git
+functionality for simplicity. If you know how to run the command-line version,
+you can probably also figure out how to run the GUI version, while the opposite
+is not necessarily true. Also, while your choice of graphical client is
+a matter of personal taste, all users will have the command-line tools
+installed and available.

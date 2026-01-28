@@ -1,0 +1,71 @@
+# Pull Request
+
+Pull request let you tell others about changes you\'ve pushed to a branch in
+a repository on GitHub. Once a pull request is opened, you can discuss and
+review the potential changes with collaborators and add follow-up commits
+before your changes are merged into the base branchgithub:about-pr.
+
+## Draft pull requests
+
+Draft pull requests are available in public repositories on GitHub.
+When you create a pull request, you can choose to a create a pull request that
+is ready for review or a draft pull request. Draft pull requests cannot be
+merged. When you\'re ready to get feedback on your pull request, you can mark
+your draft pull request as ready for review.
+
+## Difference between commits on compare and pull request pages
+
+The compare and pull request pages use different methods to calculate the diff
+for changed files:
+
+-   Compare pages show the diff between the tip of the head ref and the current
+    common ancestor (that is, the merge base) of the head and base ref.
+-   Pull request pages show the diff between the tip of the head ref and
+    the common ancestor of the head and base ref at the time when the pull
+    request was created.
+    Consequently, the merge base used for the comparison might be different.
+
+### About comparing branches
+
+Pull requests display diffs to compare the changes you made in your topic
+branch against the base branch that you want to merge your changes into.
+
+Rather that viewing the commits themselves, you can view the proposed changes
+as they\'ll appear in the files once the pull request is merged. The files
+appear in alphabetical order within the Files changed tab. Additions to
+the files appear in green and are prefaced by a `+` sign while content that
+has been removed appears in red and is prefaced by a `-` sign
+github:compare-pr.
+
+### Creating a pull request
+
+Create a pull request to propose and collaborate on changes to a repository.
+These changes are proposed in a *branch*, which ensures that the default
+branch only contains finished and approved workgithub:create-pr.
+
+## About branches
+
+Use a branch to isolate development work without affecting other branches in
+the repository. Each repository has one default branch, and can have multiple
+other branches. You can merge a branch into another branch using a pull
+request.
+
+Branches allow you to develop features, fix bugs, or safely experiment with
+new ideas in a contained area of your repository.
+
+You always create a branch from an existing branch. Typically, you might create
+a new branch from the default branch of your repository.
+
+## Creating a pull request
+
+1.  On GitHub, navigate to the main page of the repository.
+2.  Switch to \"Pull requests\" tab.
+3.  Press \"New pull request\" button.
+4.  Select base and source branches.
+5.  Press \"Create pull request\" button.
+6.  Provide a meaningful title and description.
+7.  Draft or create a pull request.
+    -   To create pull request that is ready for review, click
+        **Create Pull Request**.
+    -   To create a draft pull request, use the drop-down and select
+        **Create Draft Pull Request**, then click **Draft Pull Request**.

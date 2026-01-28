@@ -1,0 +1,49 @@
+# Variables
+
+In computer science a **variable** is a named storage location in memory that
+can hold a value (*data*). The value stored in a variable can be changed or
+accessed by the program during its execution.
+
+In Python, variables are created dynamically once a value is assigned to them.
+This makes Python a dynamically typed language, which means that the data type
+of a variable is inferred from the value assigned to it. So, you do not need
+to declare a variable before using it, as in statically typed languages.
+
+The ability to create variables dynamically and infer their data type makes
+Python code more concise and easier to read. However, it also requires careful
+attention to variable naming and assignment to avoid unexpected behavior.
+
+In Python `=` (assignment operator) is used to set a value to some variable,
+the portion on the left of the operator is a *variable name* and the portion
+on the right is a *value* to assign to a variable.
+
+<!-- Variable assignment in Python -->
+```python
+number_of_students = 10
+greeting = "hello"
+pi = 3.14
+```
+
+<!-- Variable assignment in Java -->
+```java
+int number_of_students = 10;
+String greeting = "hello";
+double pi = 3.14;
+```
+
+## Naming
+
+In Python there are several rules that describe how to name your variables.
+Some of these are requirements and cannot be ignored, others are rather
+recommended than required and can be omitted. For now note, that a variable
+name **cannot**:
+
+-   a language keyword (like `pass`, `def` or `class`)
+-   start with a number (e.g. `123`, `1_something`)
+-   contain special operators in it (`+`, `-`, `=` etc.)
+-   contain white spaces
+
+Also here are some general recommendation on naming anything:
+
+-   do not use built-in functions as a variable name (e.g. `len = 42`)
+-   keep names meaningful (`x = 10` vs `number_of_student = 100`)

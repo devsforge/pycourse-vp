@@ -1,0 +1,32 @@
+# PYTHON TRAINING COURSE
+
+::: {#master .toctree}
+intro/index
+basics/index
+rdbms/index
+vcs/index
+oop/index
+django/index
+linux/index
+deploy/index
+
+::: only
+builder_html
+
+::: {#appx .toctree caption="Additional materials"}
+appx/software_list
+appx/code_edit
+appx/env_path
+appx/precedence
+appx/printf
+appx/postgres
+appx/assignments
+appx/conv_store
+appx/wtk
+spec/blog/index
+spec/libms/index
+appx/busybox
+
+**References**
+
+::: {.bibliography all=""}

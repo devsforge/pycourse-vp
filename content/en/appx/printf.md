@@ -1,0 +1,66 @@
+# String Formatting: printf-style
+
+String objects have one unique built-in operation: the `%` operator (modulo).
+This is also known as the string *formatting* or *interpolation* operator
+docs-python:printf-formatting. Given `format % values` (where
+*format* is a string), `%` conversion specifications in *format* are replaced
+with zero or more elements of *values*. If *format* requires a single argument,
+*values* may be a single non-tuple object.
+
+The conversion flag characters are:
+
+  -----------------------------------------------------------------------------
+  Flag         Meaning
+  ------------ ----------------------------------------------------------------
+  `#`          The value conversion will use the \"alternative form\"
+
+  `0`          The conversion will be zero padded for numeric values
+
+  `'-'`        The converted value is left adjusted (override the `'0'` if
+               both are given)
+
+  `' '`        (a space) A blank should be left before a positive number
+
+  `'+'`        A sign character (`'+'` or `'-'`) will precede
+               the conversion (overrides a \"space\" flag)
+  -----------------------------------------------------------------------------
+
+The conversion types are:
+
++------------+----------------------------------------------------------------+
+| Conversion | Meaning                                                        |
++============+================================================================+
+| `'d'`      | Signed integer decimal                                         |
++------------+----------------------------------------------------------------+
+| `'i'`      | Signed integer decimal                                         |
++------------+----------------------------------------------------------------+
+| `'o'`      | Signed octal value                                             |
++------------+----------------------------------------------------------------+
+| `'u'`      | Obsolete type - it is identical to `'d'`                       |
++------------+----------------------------------------------------------------+
+| `'x'`      | Signed hexadecimal (lowercase)                                 |
++------------+----------------------------------------------------------------+
+| `'X'`      | Signed hexadecimal (uppercase)                                 |
++------------+----------------------------------------------------------------+
+| `'e'`      | Floating point exponential format (lowercase)                  |
++------------+----------------------------------------------------------------+
+| `'E'`      | Floating point exponential format (uppercase)                  |
++------------+----------------------------------------------------------------+
+| `'f'`      | Floating point decimal format                                  |
+| `'F'`      |                                                                |
++------------+----------------------------------------------------------------+
+| `'g'`      | Floating point format. Uses lowercase exponential format if    |
+|            | exponent is less that -4 or not less than precision, decimal   |
+| `'G'`      | format otherwise.                                              |
++------------+----------------------------------------------------------------+
+| `'c'`      | Single character (accepts integer or single character string)  |
++------------+----------------------------------------------------------------+
+| `'r'`      | Converts any Python object using `repr()`                      |
++------------+----------------------------------------------------------------+
+| `'s'`      | Converts any Python object using `str()`                       |
++------------+----------------------------------------------------------------+
+| `'a'`      | Converts any Python object using `ascii()`                     |
++------------+----------------------------------------------------------------+
+| `'%'`      | No arguments is converted, results in a `'%'` character in     |
+|            | the result.                                                    |
++------------+----------------------------------------------------------------+

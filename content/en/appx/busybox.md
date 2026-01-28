@@ -1,0 +1,16 @@
+# BusyBox Commands
+
+This appendix will provide an overview of common BusyBox commands, along with
+brief descriptions and usage examples.
+
+The content in this section is currently a placeholder and will be expanded
+in future revisions of the documentation. In the meantime, you can refer to
+the built-in BusyBox help ([busybox \--help]{.title-ref}) or the upstream BusyBox manual
+for detailed command reference.
+
+Planned structure for this appendix:
+
+:   -   Summary of BusyBox and its purpose
+    -   Frequently used commands and their options
+    -   Examples of typical BusyBox-based workflows
+    -   Links to additional resources and manuals
