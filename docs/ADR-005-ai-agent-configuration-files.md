@@ -1,4 +1,4 @@
-# ADR-006: AI Agent Configuration Files
+# ADR-005: AI Agent Configuration Files
 
 [//]: # (@formatter:off)
 <!-- document status badges -->
@@ -216,7 +216,7 @@ docs/
 - [ROLES.md](./ROLES.md): Authoritative human-readable role definitions
 - [ADR-001][ADR-001]: AI Guidelines Structure
 - [GitHub Copilot Custom Agents Documentation][copilot-docs]
-- Template: `templates/AGENT.md` (to be created)
+- Template: `templates/agent.md` (to be created)
 - Pilot: `.ai/agents/project-manager.agent.md` (to be created)
 
 [//]: # (@formatter:off)
