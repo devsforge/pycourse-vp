@@ -1,7 +1,7 @@
 # Python training course makefile for builds automation
 
 # Sphinx settings
-SPHINX_SRC = src
+SPHINX_SRC = content/en
 SPHINX_CONFIG = $(SPHINX_SRC)/conf.py
 
 # Internationalization

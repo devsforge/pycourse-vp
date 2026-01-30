@@ -2,16 +2,16 @@
 	path = problem-sets
 	url = https://github.com/edu-python-course/problem-sets.git
 [submodule "blog-spec"]
-	path = src/spec/blog
+	path = content/en/spec/blog
 	url = https://github.com/edu-python-course/blog-spec.git
 [submodule "libms-db"]
 	path = libms-db
 	url = https://github.com/edu-python-course/libms-db.git
 [submodule "libms-spec"]
-	path = src/spec/libms
+	path = content/en/spec/libms
 	url = https://github.com/edu-python-course/libms-spec.git
 [submodule "giver-spec"]
-	path = src/spec/giver
+	path = content/en/spec/giver
 	url = https://github.com/edu-python-course/giver-spec.git
 [submodule "impress.js"]
 	path = assets/impress.js
